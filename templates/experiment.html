@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Temperature Control</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .slider { width: 300px; margin: 50px auto; }
+        .temperature { font-size: 24px; margin-top: 20px; }
+        #endButton { margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <!-- <h1>Participant: {{ participant_name }}</h1> -->
+    <h1>Dash Board</h1>
+    <div class="slider">
+        <input type="range" id="tempSlider" min="15" max="30" value="20">
+        <div class="temperature" id="tempValue">Temperature: 20°C</div>
+    </div>
+    <button id="endButton" onclick="location.href='/end'">End Experiment</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        var socket = io();
+        var slider = document.getElementById("tempSlider");
+        var tempValue = document.getElementById("tempValue");
+
+        slider.oninput = function() {
+            tempValue.innerHTML = "Temperature: " + this.value + "°C";
+            socket.emit('temperature_update', { temperature: this.value });
+        }
+
+        socket.on('temperature_update', function(data) {
+            slider.value = data.temperature;
+            tempValue.innerHTML = "Temperature: " + data.temperature + "°C";
+        });
+    </script>
+</body>
+</html>
