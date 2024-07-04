@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from flask_socketio import SocketIO, emit
+import flask_socketio
 import time
 import csv
 from datetime import datetime
@@ -7,7 +7,7 @@ import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
+socketio = flask_socketio.SocketIO(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def start():
@@ -38,7 +38,7 @@ def handle_temperature_update(json):
     participant_name = session.get('participant_name', 'Unknown')
     start_time = session.get('start_time', time.time())
     log_interaction(participant_name, 'Web Interface', 'Change Temperature', temperature, start_time)
-    emit('temperature_update', {'temperature': temperature}, broadcast=True)
+    flask_socketio.emit('temperature_update', {'temperature': temperature}, broadcast=True)
 
 def log_interaction(participant_name, interface, action, temp, start_time):
     filename = f"interactionlog_{participant_name}.csv"
@@ -54,4 +54,4 @@ def log_interaction(participant_name, interface, action, temp, start_time):
         csv_writer.writerow([timestamp, interface, action, temp, elapsed_time])
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
