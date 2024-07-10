@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Experiment Conductor Panel</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding-top: 50px; }
+    </style>
+</head>
+<body>
+    <h1>Experiment Conductor Panel</h1>
+    <h2>Current Participant: <span id="participantName">{{ participant_name }}</span></h2>
+    <h3>Current Temperature: <span id="currentTemp">20°C</span></h3>
+    <button onclick="location.href='/end'">End Experiment</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        var socket = io();
+        socket.on('temperature_sync', function(data) {
+            document.getElementById('currentTemp').textContent = data.temperature + '°C';
+        });
+    </script>
+</body>
+</html>

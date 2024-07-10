@@ -1,0 +1,43 @@
+Timestamp,Interface,Action,Temperature,Elapsed Time
+2024-07-04T18:10:44.616902,Tablet Screen,Change Temperature,24,5.806780099868774
+2024-07-04T18:10:46.465661,rotary,Change Temperature,25,7.655539512634277
+2024-07-04T18:10:48.299182,Raspberry Pi Touch Screen,Change Temperature,26,9.489059925079346
+2024-07-04T18:10:50.075158,scroll,Change Temperature,27,11.26503586769104
+2024-07-04T18:10:54.406812,Raspberry Pi Touch Screen,Change Temperature,26,15.59669017791748
+2024-07-04T18:10:54.424336,Raspberry Pi Touch Screen,Change Temperature,25,15.614214658737183
+2024-07-04T18:10:54.447236,Raspberry Pi Touch Screen,Change Temperature,24,15.637113809585571
+2024-07-04T18:10:54.496657,Raspberry Pi Touch Screen,Change Temperature,24,15.686534881591797
+2024-07-04T18:10:54.496657,Raspberry Pi Touch Screen,Change Temperature,23,15.686534881591797
+2024-07-04T18:10:54.516666,Raspberry Pi Touch Screen,Change Temperature,23,15.706544637680054
+2024-07-04T18:10:54.598573,Raspberry Pi Touch Screen,Change Temperature,22,15.788450956344604
+2024-07-04T18:10:54.635809,Raspberry Pi Touch Screen,Change Temperature,22,15.825687646865845
+2024-07-04T18:10:54.733782,Raspberry Pi Touch Screen,Change Temperature,21,15.923660278320312
+2024-07-04T18:10:54.782687,Raspberry Pi Touch Screen,Change Temperature,22,15.972564697265625
+2024-07-04T18:10:54.792149,Raspberry Pi Touch Screen,Change Temperature,24,15.982026815414429
+2024-07-04T18:10:54.802763,Raspberry Pi Touch Screen,Change Temperature,25,15.99264121055603
+2024-07-04T18:10:54.818737,Raspberry Pi Touch Screen,Change Temperature,26,16.008615493774414
+2024-07-04T18:10:54.960346,Raspberry Pi Touch Screen,Change Temperature,28,16.150224447250366
+2024-07-04T18:10:54.987853,Raspberry Pi Touch Screen,Change Temperature,28,16.177731037139893
+2024-07-04T18:10:54.988754,Raspberry Pi Touch Screen,Change Temperature,27,16.178632020950317
+2024-07-04T18:10:55.024475,Raspberry Pi Touch Screen,Change Temperature,25,16.214353322982788
+2024-07-04T18:10:55.028922,Raspberry Pi Touch Screen,Change Temperature,24,16.21880030632019
+2024-07-04T18:10:55.056094,Raspberry Pi Touch Screen,Change Temperature,23,16.245972156524658
+2024-07-04T18:10:55.091036,Raspberry Pi Touch Screen,Change Temperature,22,16.280914068222046
+2024-07-04T18:10:55.095713,Raspberry Pi Touch Screen,Change Temperature,21,16.28559136390686
+2024-07-04T18:10:55.096716,Raspberry Pi Touch Screen,Change Temperature,21,16.28659439086914
+2024-07-04T18:10:55.118326,Raspberry Pi Touch Screen,Change Temperature,20,16.30820393562317
+2024-07-04T18:10:55.129898,Raspberry Pi Touch Screen,Change Temperature,20,16.319775819778442
+2024-07-04T18:10:55.259261,Raspberry Pi Touch Screen,Change Temperature,19,16.449138641357422
+2024-07-04T18:10:55.344841,Raspberry Pi Touch Screen,Change Temperature,20,16.534719228744507
+2024-07-04T18:10:55.390377,Raspberry Pi Touch Screen,Change Temperature,22,16.580255031585693
+2024-07-04T18:10:55.397885,Raspberry Pi Touch Screen,Change Temperature,23,16.58776307106018
+2024-07-04T18:10:55.418905,Raspberry Pi Touch Screen,Change Temperature,24,16.60878324508667
+2024-07-04T18:10:55.434919,Raspberry Pi Touch Screen,Change Temperature,25,16.624796867370605
+2024-07-04T18:10:55.475957,Raspberry Pi Touch Screen,Change Temperature,26,16.66583514213562
+2024-07-04T18:10:55.764217,Raspberry Pi Touch Screen,Change Temperature,20,16.954095602035522
+2024-07-04T18:10:55.853209,Raspberry Pi Touch Screen,Change Temperature,21,17.04308772087097
+2024-07-04T18:10:55.870289,Raspberry Pi Touch Screen,Change Temperature,22,17.060166835784912
+2024-07-04T18:10:55.903779,Raspberry Pi Touch Screen,Change Temperature,23,17.09365677833557
+2024-07-04T18:10:55.936103,Raspberry Pi Touch Screen,Change Temperature,24,17.125980615615845
+2024-07-04T18:10:57.609228,rotary,Change Temperature,23,18.799106121063232
+2024-07-04T18:10:57.815102,rotary,Change Temperature,22,19.00498080253601

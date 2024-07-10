@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-import flask_socketio
+from flask_socketio import SocketIO, emit
 import time
 import csv
 from datetime import datetime
@@ -7,40 +7,46 @@ import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = flask_socketio.SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+current_participant = None
+start_time = None
+current_temperature = 20
 
 @app.route('/', methods=['GET', 'POST'])
 def start():
+    global current_participant, start_time
     if request.method == 'POST':
-        participant_name = request.form['participant_name']
-        session['participant_name'] = participant_name
-        session['start_time'] = time.time()
-        return redirect(url_for('experiment'))
+        current_participant = request.form['participant_name']
+        start_time = time.time()
+        socketio.emit('experiment_started', {'participant': current_participant})
+        return redirect(url_for('conductor_panel'))
     return render_template('start.html')
 
-@app.route('/experiment')
-def experiment():
-    if 'participant_name' not in session:
-        return redirect(url_for('start'))
-    return render_template('experiment.html', participant_name=session['participant_name'])
+@app.route('/conductor_panel')
+def conductor_panel():
+    return render_template('conductor_panel.html', participant_name=current_participant)
 
 @app.route('/end')
 def end():
-    if 'participant_name' in session:
-        del session['participant_name']
-    if 'start_time' in session:
-        del session['start_time']
+    global current_participant, start_time
+    if current_participant:
+        socketio.emit('experiment_ended', {'participant': current_participant})
+        current_participant = None
+        start_time = None
     return redirect(url_for('start'))
 
 @socketio.on('temperature_update')
-def handle_temperature_update(json):
-    temperature = int(json['temperature'])
-    participant_name = session.get('participant_name', 'Unknown')
-    start_time = session.get('start_time', time.time())
-    log_interaction(participant_name, 'Web Interface', 'Change Temperature', temperature, start_time)
-    flask_socketio.emit('temperature_update', {'temperature': temperature}, broadcast=True)
+def handle_temperature_update(data):
+    global current_temperature
+    current_temperature = int(data['temperature'])
+    interface = data['interface']
+    log_interaction(current_participant, interface, 'Change Temperature', current_temperature, start_time)
+    emit('temperature_sync', {'temperature': current_temperature}, broadcast=True)
 
 def log_interaction(participant_name, interface, action, temp, start_time):
+    if not participant_name:
+        return
     filename = f"interactionlog_{participant_name}.csv"
     file_exists = os.path.isfile(filename)
     

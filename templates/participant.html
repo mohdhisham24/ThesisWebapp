@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Temperature Control Interfaces</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .interface { margin: 20px; padding: 20px; border: 1px solid #ddd; }
+        .slider { width: 300px; margin: 10px auto; }
+        .temperature { font-size: 24px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Temperature Control Interfaces</h1>
+
+    <div class="interface">
+        <h2>Infotainment Screen (Tablet)</h2>
+        <input type="range" id="tabletSlider" class="slider" min="15" max="30" value="20">
+        <div class="temperature" id="tabletTemp">Temperature: 20°C</div>
+    </div>
+
+    <div class="interface">
+        <h2>Infotainment Rotary Module</h2>
+        <button onclick="adjustTemperature('rotary', -1)">-</button>
+        <span id="rotaryTemp">20°C</span>
+        <button onclick="adjustTemperature('rotary', 1)">+</button>
+    </div>
+
+    <div class="interface">
+        <h2>Steering Wheel (Raspberry Pi Touch Screen)</h2>
+        <input type="range" id="raspberrySlider" class="slider" min="15" max="30" value="20">
+        <div class="temperature" id="raspberryTemp">Temperature: 20°C</div>
+    </div>
+
+    <div class="interface">
+        <h2>Steering Wheel Scroll Module</h2>
+        <button onclick="adjustTemperature('scroll', -1)">-</button>
+        <span id="scrollTemp">20°C</span>
+        <button onclick="adjustTemperature('scroll', 1)">+</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        var socket = io('http://172.22.20.105:5000');
+        var currentTemp = 20;
+
+        function updateAllDisplays() {
+            document.getElementById('tabletTemp').innerHTML = "Temperature: " + currentTemp + "°C";
+            document.getElementById('rotaryTemp').innerHTML = currentTemp + "°C";
+            document.getElementById('raspberryTemp').innerHTML = "Temperature: " + currentTemp + "°C";
+            document.getElementById('scrollTemp').innerHTML = currentTemp + "°C";
+            document.getElementById('tabletSlider').value = currentTemp;
+            document.getElementById('raspberrySlider').value = currentTemp;
+        }
+
+        function emitTemperature(interface) {
+            socket.emit('temperature_update', { 
+                temperature: currentTemp,
+                interface: interface
+            });
+        }
+
+        function adjustTemperature(interface, change) {
+            currentTemp = Math.min(30, Math.max(15, currentTemp + change));
+            updateAllDisplays();
+            emitTemperature(interface);
+        }
+
+        document.getElementById('tabletSlider').oninput = function() {
+            currentTemp = parseInt(this.value);
+            updateAllDisplays();
+            emitTemperature('Tablet Screen');
+        }
+
+        document.getElementById('raspberrySlider').oninput = function() {
+            currentTemp = parseInt(this.value);
+            updateAllDisplays();
+            emitTemperature('Raspberry Pi Touch Screen');
+        }
+
+        socket.on('temperature_sync', function(data) {
+            currentTemp = data.temperature;
+            updateAllDisplays();
+        });
+
+        socket.on('experiment_started', function(data) {
+            alert('Experiment started for participant: ' + data.participant);
+        });
+
+        socket.on('experiment_ended', function(data) {
+            alert('Experiment ended for participant: ' + data.participant);
+        });
+    </script>
+</body>
+</html>
