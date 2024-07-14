@@ -59,5 +59,9 @@ def log_interaction(participant_name, interface, action, temp, start_time):
         timestamp = datetime.now().isoformat()
         csv_writer.writerow([timestamp, interface, action, temp, elapsed_time])
 
+@app.route('/participant.html')
+def participant():
+    return render_template('participant.html')
+
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
