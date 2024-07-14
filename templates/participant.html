@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Temperature Control Interfaces</title>
+    <title>Temperature Control</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
         .interface { margin: 20px; padding: 20px; border: 1px solid #ddd; }
@@ -14,72 +14,45 @@
 
     <div class="interface">
         <h2>Infotainment Screen (Tablet)</h2>
-        <input type="range" id="tabletSlider" class="slider" min="15" max="30" value="20">
-        <div class="temperature" id="tabletTemp">Temperature: 20°C</div>
+        <input type="range" id="infotainmentSlider" class="slider" min="15" max="30" value="20">
+        <div class="temperature" id="infotainmentTemp">Temperature: 20°C</div>
     </div>
 
     <div class="interface">
-        <h2>Infotainment Rotary Module</h2>
-        <button onclick="adjustTemperature('rotary', -1)">-</button>
-        <span id="rotaryTemp">20°C</span>
-        <button onclick="adjustTemperature('rotary', 1)">+</button>
-    </div>
-
-    <div class="interface">
-        <h2>Steering Wheel (Raspberry Pi Touch Screen)</h2>
-        <input type="range" id="raspberrySlider" class="slider" min="15" max="30" value="20">
-        <div class="temperature" id="raspberryTemp">Temperature: 20°C</div>
-    </div>
-
-    <div class="interface">
-        <h2>Steering Wheel Scroll Module</h2>
-        <button onclick="adjustTemperature('scroll', -1)">-</button>
-        <span id="scrollTemp">20°C</span>
-        <button onclick="adjustTemperature('scroll', 1)">+</button>
+        <h2>Steering Wheel (Raspberry Pi)</h2>
+        <input type="range" id="steeringWheelSlider" class="slider" min="15" max="30" value="20">
+        <div class="temperature" id="steeringWheelTemp">Temperature: 20°C</div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
-        var socket = io('http://172.22.20.105:5000');
-        var currentTemp = 20;
+        var socket = io('http://192.168.0.24:5000');
+        var infotainmentSlider = document.getElementById("infotainmentSlider");
+        var steeringWheelSlider = document.getElementById("steeringWheelSlider");
+        var infotainmentTemp = document.getElementById("infotainmentTemp");
+        var steeringWheelTemp = document.getElementById("steeringWheelTemp");
 
-        function updateAllDisplays() {
-            document.getElementById('tabletTemp').innerHTML = "Temperature: " + currentTemp + "°C";
-            document.getElementById('rotaryTemp').innerHTML = currentTemp + "°C";
-            document.getElementById('raspberryTemp').innerHTML = "Temperature: " + currentTemp + "°C";
-            document.getElementById('scrollTemp').innerHTML = currentTemp + "°C";
-            document.getElementById('tabletSlider').value = currentTemp;
-            document.getElementById('raspberrySlider').value = currentTemp;
-        }
-
-        function emitTemperature(interface) {
+        function updateTemperature(slider, tempDisplay, interface) {
+            tempDisplay.innerHTML = "Temperature: " + slider.value + "°C";
             socket.emit('temperature_update', { 
-                temperature: currentTemp,
+                temperature: slider.value,
                 interface: interface
             });
         }
 
-        function adjustTemperature(interface, change) {
-            currentTemp = Math.min(30, Math.max(15, currentTemp + change));
-            updateAllDisplays();
-            emitTemperature(interface);
+        infotainmentSlider.oninput = function() {
+            updateTemperature(this, infotainmentTemp, 'Infotainment Screen');
         }
 
-        document.getElementById('tabletSlider').oninput = function() {
-            currentTemp = parseInt(this.value);
-            updateAllDisplays();
-            emitTemperature('Tablet Screen');
-        }
-
-        document.getElementById('raspberrySlider').oninput = function() {
-            currentTemp = parseInt(this.value);
-            updateAllDisplays();
-            emitTemperature('Raspberry Pi Touch Screen');
+        steeringWheelSlider.oninput = function() {
+            updateTemperature(this, steeringWheelTemp, 'Steering Wheel');
         }
 
         socket.on('temperature_sync', function(data) {
-            currentTemp = data.temperature;
-            updateAllDisplays();
+            infotainmentSlider.value = data.temperature;
+            steeringWheelSlider.value = data.temperature;
+            infotainmentTemp.innerHTML = "Temperature: " + data.temperature + "°C";
+            steeringWheelTemp.innerHTML = "Temperature: " + data.temperature + "°C";
         });
 
         socket.on('experiment_started', function(data) {
