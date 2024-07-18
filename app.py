@@ -16,11 +16,11 @@ start_time = None
 current_temperature = 20
 
 # Rotary Encoder setup
-clk = 2
-dt = 3
-sw = 4
+clk = 3  # physical pin 3 (GPIO 2)
+dt = 5   # physical pin 5 (GPIO 3)
+sw = 7   # physical pin 7 (GPIO 4)
 
-GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BOARD)
 GPIO.setup(clk, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(dt, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(sw, GPIO.IN, pull_up_down=GPIO.PUD_UP)
