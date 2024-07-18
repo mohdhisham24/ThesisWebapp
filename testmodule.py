@@ -1,26 +1,26 @@
-import RPi.GPIO as GPIO
+import lgpio
 import time
 
-# Set up GPIO using BOARD numbering
-GPIO.setmode(GPIO.BOARD)
+# Set up GPIO using lgpio
+h = lgpio.gpiochip_open(0)
 
-# Define pin numbers (physical pin numbers)
-CLK = 3  # GPIO 2 is physical pin 3
-DT = 5   # GPIO 3 is physical pin 5
-SW = 7   # GPIO 4 is physical pin 7
+# Define pin numbers (BCM numbering)
+CLK = 2
+DT = 3
+SW = 4
 
 # Set up pins as inputs
-GPIO.setup(CLK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(DT, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(SW, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+lgpio.gpio_claim_input(h, CLK)
+lgpio.gpio_claim_input(h, DT)
+lgpio.gpio_claim_input(h, SW)
 
-clkLastState = GPIO.input(CLK)
+clkLastState = lgpio.gpio_read(h, CLK)
 
 try:
     while True:
-        clkState = GPIO.input(CLK)
-        dtState = GPIO.input(DT)
-        swState = GPIO.input(SW)
+        clkState = lgpio.gpio_read(h, CLK)
+        dtState = lgpio.gpio_read(h, DT)
+        swState = lgpio.gpio_read(h, SW)
         
         if clkState != clkLastState:
             if dtState != clkState:
@@ -28,7 +28,7 @@ try:
             else:
                 print("Counterclockwise")
         
-        if swState == GPIO.LOW:
+        if swState == 0:
             print("Button pressed")
         
         clkLastState = clkState
@@ -38,5 +38,5 @@ except KeyboardInterrupt:
     print("\nExiting...")
 
 finally:
-    GPIO.cleanup()
+    lgpio.gpiochip_close(h)
     print("GPIO cleaned up")
