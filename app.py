@@ -4,6 +4,8 @@ import time
 import csv
 from datetime import datetime
 import os
+import RPi.GPIO as GPIO
+from threading import Thread
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -12,6 +14,56 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 current_participant = None
 start_time = None
 current_temperature = 20
+
+# Rotary Encoder setup
+clk = 2
+dt = 3
+sw = 4
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(clk, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(dt, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(sw, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+clkLastState = GPIO.input(clk)
+
+def rotary_encoder_thread():
+    global current_temperature
+    clkLastState = GPIO.input(clk)
+    swLastState = GPIO.input(sw)
+    
+    try:
+        while True:
+            clkState = GPIO.input(clk)
+            dtState = GPIO.input(dt)
+            swState = GPIO.input(sw)
+            
+            if clkState != clkLastState:
+                if dtState != clkState:
+                    current_temperature += 1
+                else:
+                    current_temperature -= 1
+                
+                current_temperature = max(15, min(30, current_temperature))
+                socketio.emit('temperature_sync', {'temperature': current_temperature}, broadcast=True)
+                log_interaction(current_participant, 'Steering Wheel Knob', 'Change Temperature', current_temperature, start_time)
+            
+            if swState != swLastState:
+                if swState == GPIO.LOW:
+                    print("Button pressed!")
+                    socketio.emit('button_press', {'message': 'Encoder button pressed'})
+                    log_interaction(current_participant, 'Steering Wheel Knob', 'Button Press', current_temperature, start_time)
+            
+            clkLastState = clkState
+            swLastState = swState
+            time.sleep(0.01)
+    finally:
+        GPIO.cleanup()
+
+# Start the rotary encoder thread
+encoder_thread = Thread(target=rotary_encoder_thread)
+encoder_thread.daemon = True
+encoder_thread.start()
 
 @app.route('/', methods=['GET', 'POST'])
 def start():

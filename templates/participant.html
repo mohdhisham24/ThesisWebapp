@@ -76,6 +76,11 @@
             steeringWheelKnobTemp.innerHTML = "Temperature: " + temp + "°C";
         });
 
+        socket.on('button_press', function(data) {
+            console.log(data.message);
+            // You can add any UI updates for button press here
+        });
+
         socket.on('experiment_started', function(data) {
             alert('Experiment started for participant: ' + data.participant);
         });
