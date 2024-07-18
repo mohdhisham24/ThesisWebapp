@@ -16,7 +16,7 @@ start_time = None
 current_temperature = 20
 
 # Rotary Encoder setup
-rotor = RotaryEncoder(2, 3, wrap=True, max_steps=30, min_steps=15)
+rotor = RotaryEncoder(2, 3)
 button = Button(4)
 
 def rotary_encoder_thread():
@@ -24,7 +24,8 @@ def rotary_encoder_thread():
     
     def handle_rotation():
         global current_temperature
-        current_temperature = rotor.steps + 15  # Adjust for 15-30 range
+        current_temperature = max(15, min(30, current_temperature + rotor.steps))
+        rotor.steps = 0  # Reset steps after reading
         socketio.emit('temperature_sync', {'temperature': current_temperature}, broadcast=True)
         log_interaction(current_participant, 'Steering Wheel Knob', 'Change Temperature', current_temperature, start_time)
 
