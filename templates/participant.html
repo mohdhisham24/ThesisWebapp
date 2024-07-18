@@ -7,52 +7,73 @@
         .interface { margin: 20px; padding: 20px; border: 1px solid #ddd; }
         .slider { width: 300px; margin: 10px auto; }
         .temperature { font-size: 24px; margin-top: 20px; }
+        .button-container { margin-top: 10px; }
+        .temp-button { margin: 0 5px; }
     </style>
 </head>
 <body>
     <h1>Temperature Control Interfaces</h1>
 
     <div class="interface">
-        <h2>Infotainment Screen (Tablet)</h2>
-        <input type="range" id="infotainmentSlider" class="slider" min="15" max="30" value="20">
-        <div class="temperature" id="infotainmentTemp">Temperature: 20°C</div>
+        <h2>Infotainment Screen Knob</h2>
+        <input type="range" id="infotainmentKnobSlider" class="slider" min="15" max="30" value="20">
+        <div class="temperature" id="infotainmentKnobTemp">Temperature: 20°C</div>
     </div>
 
     <div class="interface">
-        <h2>Steering Wheel (Raspberry Pi)</h2>
-        <input type="range" id="steeringWheelSlider" class="slider" min="15" max="30" value="20">
-        <div class="temperature" id="steeringWheelTemp">Temperature: 20°C</div>
+        <h2>Infotainment Screen Touch</h2>
+        <input type="range" id="infotainmentTouchSlider" class="slider" min="15" max="30" value="20">
+        <div class="temperature" id="infotainmentTouchTemp">Temperature: 20°C</div>
+    </div>
+
+    <div class="interface">
+        <h2>Steering Wheel Touch</h2>
+        <div class="button-container">
+            <button class="temp-button" onclick="updateTemperature('Steering Wheel Touch', -1)">-</button>
+            <button class="temp-button" onclick="updateTemperature('Steering Wheel Touch', 1)">+</button>
+        </div>
+        <div class="temperature" id="steeringWheelTouchTemp">Temperature: 20°C</div>
+    </div>
+
+    <div class="interface">
+        <h2>Steering Wheel Knob (Hardware)</h2>
+        <div class="temperature" id="steeringWheelKnobTemp">Temperature: 20°C</div>
+        <p>This is controlled by the physical rotary encoder</p>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
         var socket = io('http://192.168.0.24:5000');
-        var infotainmentSlider = document.getElementById("infotainmentSlider");
-        var steeringWheelSlider = document.getElementById("steeringWheelSlider");
-        var infotainmentTemp = document.getElementById("infotainmentTemp");
-        var steeringWheelTemp = document.getElementById("steeringWheelTemp");
+        var infotainmentKnobSlider = document.getElementById("infotainmentKnobSlider");
+        var infotainmentTouchSlider = document.getElementById("infotainmentTouchSlider");
+        var infotainmentKnobTemp = document.getElementById("infotainmentKnobTemp");
+        var infotainmentTouchTemp = document.getElementById("infotainmentTouchTemp");
+        var steeringWheelTouchTemp = document.getElementById("steeringWheelTouchTemp");
+        var steeringWheelKnobTemp = document.getElementById("steeringWheelKnobTemp");
 
-        function updateTemperature(slider, tempDisplay, interface) {
-            tempDisplay.innerHTML = "Temperature: " + slider.value + "°C";
+        function updateTemperature(interface, value) {
             socket.emit('temperature_update', { 
-                temperature: slider.value,
+                temperature: value,
                 interface: interface
             });
         }
 
-        infotainmentSlider.oninput = function() {
-            updateTemperature(this, infotainmentTemp, 'Infotainment Screen');
+        infotainmentKnobSlider.oninput = function() {
+            updateTemperature('Infotainment Screen Knob', this.value);
         }
 
-        steeringWheelSlider.oninput = function() {
-            updateTemperature(this, steeringWheelTemp, 'Steering Wheel');
+        infotainmentTouchSlider.oninput = function() {
+            updateTemperature('Infotainment Screen Touch', this.value);
         }
 
         socket.on('temperature_sync', function(data) {
-            infotainmentSlider.value = data.temperature;
-            steeringWheelSlider.value = data.temperature;
-            infotainmentTemp.innerHTML = "Temperature: " + data.temperature + "°C";
-            steeringWheelTemp.innerHTML = "Temperature: " + data.temperature + "°C";
+            var temp = data.temperature;
+            infotainmentKnobSlider.value = temp;
+            infotainmentTouchSlider.value = temp;
+            infotainmentKnobTemp.innerHTML = "Temperature: " + temp + "°C";
+            infotainmentTouchTemp.innerHTML = "Temperature: " + temp + "°C";
+            steeringWheelTouchTemp.innerHTML = "Temperature: " + temp + "°C";
+            steeringWheelKnobTemp.innerHTML = "Temperature: " + temp + "°C";
         });
 
         socket.on('experiment_started', function(data) {

@@ -39,7 +39,13 @@ def end():
 @socketio.on('temperature_update')
 def handle_temperature_update(data):
     global current_temperature
-    current_temperature = int(data['temperature'])
+    if 'temperature' in data:
+        current_temperature = int(data['temperature'])
+    elif 'value' in data:
+        # For steering wheel touch buttons
+        current_temperature += int(data['value'])
+        current_temperature = max(15, min(30, current_temperature))
+    
     interface = data['interface']
     log_interaction(current_participant, interface, 'Change Temperature', current_temperature, start_time)
     emit('temperature_sync', {'temperature': current_temperature}, broadcast=True)
