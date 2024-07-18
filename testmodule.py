@@ -1,13 +1,13 @@
 import RPi.GPIO as GPIO
 import time
 
-# Set up GPIO using BCM numbering
-GPIO.setmode(GPIO.BCM)
+# Set up GPIO using BOARD numbering
+GPIO.setmode(GPIO.BOARD)
 
-# Define pin numbers
-CLK = 2
-DT = 3
-SW = 4
+# Define pin numbers (physical pin numbers)
+CLK = 3  # GPIO 2 is physical pin 3
+DT = 5   # GPIO 3 is physical pin 5
+SW = 7   # GPIO 4 is physical pin 7
 
 # Set up pins as inputs
 GPIO.setup(CLK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
