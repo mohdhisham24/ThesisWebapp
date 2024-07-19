@@ -7,6 +7,7 @@ import os
 from gpiozero import RotaryEncoder, Button, Device
 from gpiozero.pins.rpigpio import RPiGPIOFactory
 from threading import Thread
+import sys
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -20,6 +21,9 @@ current_temperature = 20
 CLK = 13
 DT = 18
 SW = 12
+
+rotor = None
+button = None
 
 def release_gpio_pins(pins):
     """Release GPIO pins to avoid conflicts."""
@@ -37,16 +41,27 @@ def init_gpio():
     pins_to_release = [CLK, DT, SW]
     release_gpio_pins(pins_to_release)  # Release GPIO pins if they are in use
 
-    # Initialize the GPIO pin factory
-    Device.pin_factory = RPiGPIOFactory()
+    try:
+        # Initialize the GPIO pin factory
+        Device.pin_factory = RPiGPIOFactory()
 
-    # Create a RotaryEncoder instance
-    rotor = RotaryEncoder(CLK, DT)
-    button = Button(SW, pull_up=True)
-    print("GPIO devices initialized")
+        # Create a RotaryEncoder instance
+        rotor = RotaryEncoder(CLK, DT)
+        button = Button(SW, pull_up=True)
+        print("GPIO devices initialized")
+    except Exception as e:
+        print(f"Error initializing GPIO devices: {e}")
+        print("System info:")
+        print(f"Python version: {sys.version}")
+        print(f"gpiozero version: {gpiozero.__version__}")
+        raise
 
 def rotary_encoder_thread():
     global current_temperature
+
+    if rotor is None or button is None:
+        print("Rotary encoder or button not initialized. Exiting thread.")
+        return
 
     def rotated():
         global current_temperature
@@ -134,16 +149,19 @@ if __name__ == '__main__':
     try:
         print("Starting GPIO initialization")
         init_gpio()  # Initialize GPIO pins
-        encoder_thread = Thread(target=rotary_encoder_thread)
-        encoder_thread.daemon = True
-        encoder_thread.start()
-        print("Starting Flask application")
-        socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+        if rotor and button:
+            encoder_thread = Thread(target=rotary_encoder_thread)
+            encoder_thread.daemon = True
+            encoder_thread.start()
+            print("Starting Flask application")
+            socketio.run(app, host='0.0.0.0', port=5000, debug=False)
+        else:
+            print("Failed to initialize GPIO devices. Flask application will not start.")
     except Exception as e:
         print(f"Error running Flask application: {e}")
     finally:
-        if rotor:
+        if 'rotor' in globals() and rotor:
             rotor.close()
-        if button:
+        if 'button' in globals() and button:
             button.close()
         print("GPIO cleaned up")
