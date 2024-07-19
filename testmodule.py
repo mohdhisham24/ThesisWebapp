@@ -3,8 +3,8 @@ from signal import pause
 import time
 
 # Define pin numbers (BCM numbering)
-CLK = 2
-DT = 4
+CLK = 13
+DT = 18
 SW = 12
 
 # Create a RotaryEncoder instance
