@@ -9,10 +9,28 @@ CLK = 2
 DT = 3
 SW = 4
 
+def claim_pin(h, pin):
+    max_attempts = 5
+    for attempt in range(max_attempts):
+        try:
+            lgpio.gpio_claim_input(h, pin)
+            print(f"Successfully claimed pin {pin}")
+            return True
+        except lgpio.error as e:
+            if "GPIO busy" in str(e):
+                print(f"Attempt {attempt + 1}: GPIO {pin} is busy. Waiting and trying again...")
+                time.sleep(1)
+            else:
+                print(f"Unexpected error claiming GPIO {pin}: {e}")
+                return False
+    print(f"Failed to claim GPIO {pin} after {max_attempts} attempts")
+    return False
+
 # Set up pins as inputs
-lgpio.gpio_claim_input(h, CLK)
-lgpio.gpio_claim_input(h, DT)
-lgpio.gpio_claim_input(h, SW)
+if not all(claim_pin(h, pin) for pin in [CLK, DT, SW]):
+    print("Failed to claim all required pins. Exiting.")
+    lgpio.gpiochip_close(h)
+    exit(1)
 
 clkLastState = lgpio.gpio_read(h, CLK)
 
