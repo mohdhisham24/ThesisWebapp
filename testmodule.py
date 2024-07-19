@@ -1,7 +1,7 @@
 import lgpio
 import time
 
-# Set up GPIO using lgpio
+# Open a handle to the GPIO chip
 h = lgpio.gpiochip_open(0)
 
 # Define pin numbers (BCM numbering)
