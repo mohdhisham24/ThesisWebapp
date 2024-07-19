@@ -16,9 +16,9 @@ start_time = None
 current_temperature = 20
 
 # Define pin numbers (BCM numbering)
-CLK = 13
-DT = 18
-SW = 12
+CLK = 13  # GPIO 13
+DT = 18   # GPIO 18
+SW = 12   # GPIO 12
 
 # Create a RotaryEncoder instance
 rotor = RotaryEncoder(CLK, DT)
@@ -48,7 +48,7 @@ def rotary_encoder_thread():
 
     try:
         while True:
-            time.sleep(0.1)
+            time.sleep(0.1)  # Keep the thread alive
     except KeyboardInterrupt:
         print("\nExiting rotary encoder thread...")
 
