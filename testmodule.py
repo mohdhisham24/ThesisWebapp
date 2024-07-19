@@ -18,13 +18,9 @@ def rotated():
 def button_pressed():
     print("Button pressed")
 
-def button_released():
-    print("Button released")
-
 # Set up event handlers
 rotor.when_rotated = rotated
 button.when_pressed = button_pressed
-button.when_released = button_released
 
 print("Rotary Encoder Test. Press CTRL+C to exit.")
 

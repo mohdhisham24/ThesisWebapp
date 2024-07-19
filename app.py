@@ -5,16 +5,7 @@ import csv
 from datetime import datetime
 import os
 from gpiozero import RotaryEncoder, Button
-from gpiozero.pins.rpigpio import RPiGPIOFactory
 from threading import Thread
-import logging
-
-# Set up logging
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
-
-# Set the GPIOZERO_PIN_FACTORY environment variable
-os.environ['GPIOZERO_PIN_FACTORY'] = 'rpigpio'
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -29,25 +20,12 @@ CLK = 13
 DT = 18
 SW = 12
 
-# Create a pin factory
-pin_factory = RPiGPIOFactory()
-
 # Create a RotaryEncoder instance
-try:
-    rotor = RotaryEncoder(CLK, DT, pin_factory=pin_factory)
-    button = Button(SW, pull_up=True, pin_factory=pin_factory)
-    logger.info("Rotary Encoder and Button initialized successfully")
-except Exception as e:
-    logger.error(f"Error initializing Rotary Encoder or Button: {e}")
-    rotor = None
-    button = None
+rotor = RotaryEncoder(CLK, DT)
+button = Button(SW, pull_up=True)
 
 def rotary_encoder_thread():
     global current_temperature
-
-    if rotor is None or button is None:
-        logger.error("Rotary Encoder or Button not initialized. Exiting thread.")
-        return
 
     def rotated():
         global current_temperature
@@ -55,33 +33,30 @@ def rotary_encoder_thread():
             current_temperature = min(30, current_temperature + 1)
         else:
             current_temperature = max(15, current_temperature - 1)
-        logger.debug(f"Temperature changed to {current_temperature}")
+        print(f"Temperature changed to {current_temperature}")
         socketio.emit('temperature_sync', {'temperature': current_temperature}, broadcast=True)
         log_interaction(current_participant, 'Steering Wheel Knob', 'Change Temperature', current_temperature, start_time)
 
     def button_pressed():
-        logger.debug("Button pressed")
+        print("Button pressed")
         socketio.emit('button_press', {'message': 'Encoder button pressed'})
         log_interaction(current_participant, 'Steering Wheel Knob', 'Button Press', current_temperature, start_time)
 
     rotor.when_rotated = rotated
     button.when_pressed = button_pressed
 
-    logger.info("Rotary Encoder thread initialized. Press CTRL+C to exit.")
+    print("Rotary Encoder thread initialized. Press CTRL+C to exit.")
 
     try:
         while True:
             time.sleep(0.1)
     except KeyboardInterrupt:
-        logger.info("\nExiting rotary encoder thread...")
+        print("\nExiting rotary encoder thread...")
 
 # Start the rotary encoder thread
-if rotor is not None and button is not None:
-    encoder_thread = Thread(target=rotary_encoder_thread)
-    encoder_thread.daemon = True
-    encoder_thread.start()
-else:
-    logger.error("Rotary Encoder thread not started due to initialization failure")
+encoder_thread = Thread(target=rotary_encoder_thread)
+encoder_thread.daemon = True
+encoder_thread.start()
 
 @app.route('/', methods=['GET', 'POST'])
 def start():
@@ -141,13 +116,9 @@ def participant():
 
 if __name__ == '__main__':
     try:
-        logger.info("Starting Flask application")
+        print("Starting Flask application")
         socketio.run(app, host='0.0.0.0', port=5000, debug=True)
     except Exception as e:
-        logger.error(f"Error running Flask application: {e}")
+        print(f"Error running Flask application: {e}")
     finally:
-        if rotor:
-            rotor.close()
-        if button:
-            button.close()
-        logger.info("GPIO resources released")
+        print("Application shutting down")
