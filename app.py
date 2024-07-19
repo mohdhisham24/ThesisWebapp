@@ -5,6 +5,7 @@ import csv
 from datetime import datetime
 import os
 from gpiozero import RotaryEncoder, Button
+from gpiozero.pins.rpigpio import RPiGPIOFactory
 from threading import Thread
 
 app = Flask(__name__)
@@ -16,16 +17,29 @@ start_time = None
 current_temperature = 20
 
 # Define pin numbers (BCM numbering)
-CLK = 13  # GPIO 13
-DT = 18   # GPIO 18
-SW = 12   # GPIO 12
+CLK = 13
+DT = 18
+SW = 12
+
+# Create a pin factory
+pin_factory = RPiGPIOFactory()
 
 # Create a RotaryEncoder instance
-rotor = RotaryEncoder(CLK, DT)
-button = Button(SW, pull_up=True)
+try:
+    rotor = RotaryEncoder(CLK, DT, pin_factory=pin_factory)
+    button = Button(SW, pull_up=True, pin_factory=pin_factory)
+    print("Rotary Encoder and Button initialized successfully")
+except Exception as e:
+    print(f"Error initializing Rotary Encoder or Button: {e}")
+    rotor = None
+    button = None
 
 def rotary_encoder_thread():
     global current_temperature
+
+    if rotor is None or button is None:
+        print("Rotary Encoder or Button not initialized. Exiting thread.")
+        return
 
     def rotated():
         global current_temperature
@@ -44,18 +58,21 @@ def rotary_encoder_thread():
     rotor.when_rotated = rotated
     button.when_pressed = button_pressed
 
-    print("Rotary Encoder initialized. Press CTRL+C to exit.")
+    print("Rotary Encoder thread initialized. Press CTRL+C to exit.")
 
     try:
         while True:
-            time.sleep(0.1)  # Keep the thread alive
+            time.sleep(0.1)
     except KeyboardInterrupt:
         print("\nExiting rotary encoder thread...")
 
 # Start the rotary encoder thread
-encoder_thread = Thread(target=rotary_encoder_thread)
-encoder_thread.daemon = True
-encoder_thread.start()
+if rotor is not None and button is not None:
+    encoder_thread = Thread(target=rotary_encoder_thread)
+    encoder_thread.daemon = True
+    encoder_thread.start()
+else:
+    print("Rotary Encoder thread not started due to initialization failure")
 
 @app.route('/', methods=['GET', 'POST'])
 def start():
@@ -114,4 +131,11 @@ def participant():
     return render_template('participant.html')
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    try:
+        socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    finally:
+        if rotor:
+            rotor.close()
+        if button:
+            button.close()
+        print("GPIO resources released")
