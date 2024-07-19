@@ -6,8 +6,8 @@ h = lgpio.gpiochip_open(0)
 
 # Define pin numbers (BCM numbering)
 CLK = 2
-DT = 3
-SW = 4
+DT = 4
+SW = 12
 
 def claim_pin(h, pin):
     max_attempts = 5
