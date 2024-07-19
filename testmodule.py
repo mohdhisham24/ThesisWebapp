@@ -1,60 +1,40 @@
-import lgpio
+from gpiozero import RotaryEncoder, Button
+from signal import pause
 import time
-
-# Open a handle to the GPIO chip
-h = lgpio.gpiochip_open(0)
 
 # Define pin numbers (BCM numbering)
 CLK = 2
 DT = 4
 SW = 12
 
-def claim_pin(h, pin):
-    max_attempts = 5
-    for attempt in range(max_attempts):
-        try:
-            lgpio.gpio_claim_input(h, pin)
-            print(f"Successfully claimed pin {pin}")
-            return True
-        except lgpio.error as e:
-            if "GPIO busy" in str(e):
-                print(f"Attempt {attempt + 1}: GPIO {pin} is busy. Waiting and trying again...")
-                time.sleep(1)
-            else:
-                print(f"Unexpected error claiming GPIO {pin}: {e}")
-                return False
-    print(f"Failed to claim GPIO {pin} after {max_attempts} attempts")
-    return False
+# Create a RotaryEncoder instance
+rotor = RotaryEncoder(CLK, DT)
+button = Button(SW, pull_up=True)
 
-# Set up pins as inputs
-if not all(claim_pin(h, pin) for pin in [CLK, DT, SW]):
-    print("Failed to claim all required pins. Exiting.")
-    lgpio.gpiochip_close(h)
-    exit(1)
+def rotated():
+    print(f"Rotated: {'Clockwise' if rotor.value > 0 else 'Counterclockwise'}")
+    print(f"Steps: {rotor.steps}")
 
-clkLastState = lgpio.gpio_read(h, CLK)
+def button_pressed():
+    print("Button pressed")
+
+def button_released():
+    print("Button released")
+
+# Set up event handlers
+rotor.when_rotated = rotated
+button.when_pressed = button_pressed
+button.when_released = button_released
+
+print("Rotary Encoder Test. Press CTRL+C to exit.")
 
 try:
     while True:
-        clkState = lgpio.gpio_read(h, CLK)
-        dtState = lgpio.gpio_read(h, DT)
-        swState = lgpio.gpio_read(h, SW)
-        
-        if clkState != clkLastState:
-            if dtState != clkState:
-                print("Clockwise")
-            else:
-                print("Counterclockwise")
-        
-        if swState == 0:
-            print("Button pressed")
-        
-        clkLastState = clkState
-        time.sleep(0.01)
-
+        # This loop keeps the script running
+        # All events are handled by the callbacks
+        time.sleep(0.1)
 except KeyboardInterrupt:
     print("\nExiting...")
-
 finally:
-    lgpio.gpiochip_close(h)
+    # gpiozero automatically cleans up GPIO resources
     print("GPIO cleaned up")
