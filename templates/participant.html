@@ -11,6 +11,7 @@
         .button-container { margin-top: 10px; }
         .temp-button { margin: 0 5px; }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
 <body>
     <h1>Temperature Control Interfaces</h1>
@@ -43,16 +44,18 @@
         <div id="buttonPressIndicator"></div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
-        var socket = io('http://192.168.137.13:5000'); // Update with your server's IP
-        var infotainmentKnobSlider = document.getElementById("infotainmentKnobSlider");
-        var infotainmentTouchSlider = document.getElementById("infotainmentTouchSlider");
-        var infotainmentKnobTemp = document.getElementById("infotainmentKnobTemp");
-        var infotainmentTouchTemp = document.getElementById("infotainmentTouchTemp");
-        var steeringWheelTouchTemp = document.getElementById("steeringWheelTouchTemp");
-        var steeringWheelKnobTemp = document.getElementById("steeringWheelKnobTemp");
-        var buttonPressIndicator = document.getElementById("buttonPressIndicator");
+        var socket = io();
+        var currentTemperature = 20;
+
+        function updateAllTemperatures(temp) {
+            document.getElementById('infotainmentKnobTemp').textContent = `Temperature: ${temp}°C`;
+            document.getElementById('infotainmentTouchTemp').textContent = `Temperature: ${temp}°C`;
+            document.getElementById('steeringWheelTouchTemp').textContent = `Temperature: ${temp}°C`;
+            document.getElementById('steeringWheelKnobTemp').textContent = `Temperature: ${temp}°C`;
+            document.getElementById('infotainmentKnobSlider').value = temp;
+            document.getElementById('infotainmentTouchSlider').value = temp;
+        }
 
         function updateTemperature(interface, value) {
             socket.emit('temperature_update', { 
@@ -61,29 +64,24 @@
             });
         }
 
-        infotainmentKnobSlider.oninput = function() {
+        document.getElementById('infotainmentKnobSlider').oninput = function() {
             updateTemperature('Infotainment Screen Knob', this.value);
         }
 
-        infotainmentTouchSlider.oninput = function() {
+        document.getElementById('infotainmentTouchSlider').oninput = function() {
             updateTemperature('Infotainment Screen Touch', this.value);
         }
 
         socket.on('temperature_sync', function(data) {
-            var temp = data.temperature;
-            infotainmentKnobSlider.value = temp;
-            infotainmentTouchSlider.value = temp;
-            infotainmentKnobTemp.innerHTML = "Temperature: " + temp + "°C";
-            infotainmentTouchTemp.innerHTML = "Temperature: " + temp + "°C";
-            steeringWheelTouchTemp.innerHTML = "Temperature: " + temp + "°C";
-            steeringWheelKnobTemp.innerHTML = "Temperature: " + temp + "°C";
+            currentTemperature = data.temperature;
+            updateAllTemperatures(currentTemperature);
         });
 
         socket.on('button_press', function(data) {
             console.log(data.message);
-            buttonPressIndicator.innerHTML = "Button Pressed!";
+            document.getElementById('buttonPressIndicator').textContent = "Button Pressed!";
             setTimeout(function() {
-                buttonPressIndicator.innerHTML = "";
+                document.getElementById('buttonPressIndicator').textContent = "";
             }, 2000);
         });
 

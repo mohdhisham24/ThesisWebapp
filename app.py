@@ -8,6 +8,9 @@ from gpiozero import RotaryEncoder, Button
 from gpiozero.pins.rpigpio import RPiGPIOFactory
 from threading import Thread
 
+# Set the GPIOZERO_PIN_FACTORY environment variable to use RPi.GPIO
+os.environ['GPIOZERO_PIN_FACTORY'] = 'rpigpio'
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -17,9 +20,9 @@ start_time = None
 current_temperature = 20
 
 # Define pin numbers (BCM numbering)
-CLK = 13
-DT = 18
-SW = 12
+CLK = 13  # GPIO 13
+DT = 18   # GPIO 18
+SW = 12   # GPIO 12
 
 # Create a pin factory
 pin_factory = RPiGPIOFactory()
@@ -131,11 +134,4 @@ def participant():
     return render_template('participant.html')
 
 if __name__ == '__main__':
-    try:
-        socketio.run(app, host='0.0.0.0', port=5000, debug=True)
-    finally:
-        if rotor:
-            rotor.close()
-        if button:
-            button.close()
-        print("GPIO resources released")
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
