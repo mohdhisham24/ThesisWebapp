@@ -4,7 +4,7 @@ import time
 import csv
 from datetime import datetime
 import os
-import RPi.GPIO as GPIO
+from gpiozero import RotaryEncoder, Button
 from threading import Thread
 
 app = Flask(__name__)
@@ -15,52 +15,42 @@ current_participant = None
 start_time = None
 current_temperature = 20
 
-# Rotary Encoder setup
-clk = 2
-dt = 3
-sw = 4
+# Define pin numbers (BCM numbering)
+CLK = 13
+DT = 18
+SW = 12
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(clk, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(dt, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(sw, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-clkLastState = GPIO.input(clk)
+# Create a RotaryEncoder instance
+rotor = RotaryEncoder(CLK, DT)
+button = Button(SW, pull_up=True)
 
 def rotary_encoder_thread():
     global current_temperature
-    clkLastState = GPIO.input(clk)
-    swLastState = GPIO.input(sw)
-    
+
+    def rotated():
+        global current_temperature
+        if rotor.value > 0:
+            current_temperature = min(30, current_temperature + 1)
+        else:
+            current_temperature = max(15, current_temperature - 1)
+        socketio.emit('temperature_sync', {'temperature': current_temperature}, broadcast=True)
+        log_interaction(current_participant, 'Steering Wheel Knob', 'Change Temperature', current_temperature, start_time)
+
+    def button_pressed():
+        print("Button pressed")
+        socketio.emit('button_press', {'message': 'Encoder button pressed'})
+        log_interaction(current_participant, 'Steering Wheel Knob', 'Button Press', current_temperature, start_time)
+
+    rotor.when_rotated = rotated
+    button.when_pressed = button_pressed
+
+    print("Rotary Encoder initialized. Press CTRL+C to exit.")
+
     try:
         while True:
-            clkState = GPIO.input(clk)
-            dtState = GPIO.input(dt)
-            swState = GPIO.input(sw)
-            
-            if clkState != clkLastState:
-                if dtState != clkState:
-                    current_temperature += 1
-                else:
-                    current_temperature -= 1
-                
-                current_temperature = max(15, min(30, current_temperature))
-                socketio.emit('temperature_sync', {'temperature': current_temperature}, broadcast=True)
-                log_interaction(current_participant, 'Steering Wheel Knob', 'Change Temperature', current_temperature, start_time)
-            
-            if swState != swLastState:
-                if swState == GPIO.LOW:
-                    print("Button pressed!")
-                    socketio.emit('button_press', {'message': 'Encoder button pressed'})
-                    log_interaction(current_participant, 'Steering Wheel Knob', 'Button Press', current_temperature, start_time)
-            
-            clkLastState = clkState
-            swLastState = swState
-            time.sleep(0.01)
-    except Exception as e:
-        print(f"Error in rotary encoder thread: {e}")
-    finally:
-        GPIO.cleanup()
+            time.sleep(0.1)
+    except KeyboardInterrupt:
+        print("\nExiting rotary encoder thread...")
 
 # Start the rotary encoder thread
 encoder_thread = Thread(target=rotary_encoder_thread)
@@ -124,7 +114,4 @@ def participant():
     return render_template('participant.html')
 
 if __name__ == '__main__':
-    try:
-        socketio.run(app, host='0.0.0.0', port=5000, debug=True)
-    finally:
-        GPIO.cleanup()
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)

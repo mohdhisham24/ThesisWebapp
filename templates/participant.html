@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temperature Control</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
         .interface { margin: 20px; padding: 20px; border: 1px solid #ddd; }
-        .slider { width: 300px; margin: 10px auto; }
         .temperature { font-size: 24px; margin-top: 20px; }
         .button-container { margin-top: 10px; }
         .temp-button { margin: 0 5px; }
@@ -39,17 +40,19 @@
         <h2>Steering Wheel Knob (Hardware)</h2>
         <div class="temperature" id="steeringWheelKnobTemp">Temperature: 20°C</div>
         <p>This is controlled by the physical rotary encoder</p>
+        <div id="buttonPressIndicator"></div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
-        var socket = io('http://192.168.0.24:5000');
+        var socket = io('http://192.168.0.24:5000'); // Update with your server's IP
         var infotainmentKnobSlider = document.getElementById("infotainmentKnobSlider");
         var infotainmentTouchSlider = document.getElementById("infotainmentTouchSlider");
         var infotainmentKnobTemp = document.getElementById("infotainmentKnobTemp");
         var infotainmentTouchTemp = document.getElementById("infotainmentTouchTemp");
         var steeringWheelTouchTemp = document.getElementById("steeringWheelTouchTemp");
         var steeringWheelKnobTemp = document.getElementById("steeringWheelKnobTemp");
+        var buttonPressIndicator = document.getElementById("buttonPressIndicator");
 
         function updateTemperature(interface, value) {
             socket.emit('temperature_update', { 
@@ -78,7 +81,10 @@
 
         socket.on('button_press', function(data) {
             console.log(data.message);
-            // You can add any UI updates for button press here
+            buttonPressIndicator.innerHTML = "Button Pressed!";
+            setTimeout(function() {
+                buttonPressIndicator.innerHTML = "";
+            }, 2000);
         });
 
         socket.on('experiment_started', function(data) {
