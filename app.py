@@ -114,10 +114,12 @@ def log_interaction(participant_name, interface, action, temp, start_time):
         csv_writer.writerow([timestamp, interface, action, temp, elapsed_time])
 
 @app.route('/raspberry_touch')
+@app.route('/raspberry_touch.html')
 def raspberry_touch():
     return render_template('raspberry_touch.html')
 
 @app.route('/infotainment_touch')
+@app.route('/infotainment_touch.html')
 def infotainment_touch():
     return render_template('infotainment_touch.html')
 
