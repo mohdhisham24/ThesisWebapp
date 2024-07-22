@@ -24,34 +24,6 @@ SW = 12
 rotor = RotaryEncoder(CLK, DT)
 button = Button(SW, pull_up=True)
 
-# def rotary_encoder_thread():
-#     global current_temperature
-
-#     def rotated():
-#         global current_temperature
-#         if rotor.value > 0:
-#             current_temperature = min(30, current_temperature + 1)
-#         else:
-#             current_temperature = max(15, current_temperature - 1)
-#         print(f"Temperature changed to {current_temperature}")
-#         socketio.emit('temperature_sync', {'temperature': current_temperature}, broadcast=True)
-#         log_interaction(current_participant, 'Steering Wheel Knob', 'Change Temperature', current_temperature, start_time)
-
-#     def button_pressed():
-#         print("Button pressed")
-#         socketio.emit('button_press', {'message': 'Encoder button pressed'})
-#         log_interaction(current_participant, 'Steering Wheel Knob', 'Button Press', current_temperature, start_time)
-
-#     rotor.when_rotated = rotated
-#     button.when_pressed = button_pressed
-
-#     print("Rotary Encoder thread initialized. Press CTRL+C to exit.")
-
-#     try:
-#         while True:
-#             time.sleep(0.1)
-#     except KeyboardInterrupt:
-#         print("\nExiting rotary encoder thread...")
 
 def rotary_encoder_thread():
     global current_temperature
