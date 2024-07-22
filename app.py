@@ -15,17 +15,24 @@ current_participant = None
 start_time = None
 current_temperature = 20
 
-# Define pin numbers (BCM numbering)
-CLK = 13
-DT = 18
-SW = 12
+# Define pin numbers for the first rotary encoder (Steering Wheel Knob)
+CLK1 = 13
+DT1 = 18
+SW1 = 12
 
-# Create a RotaryEncoder instance
-rotor = RotaryEncoder(CLK, DT)
-button = Button(SW, pull_up=True)
+# Define pin numbers for the second rotary encoder (Infotainment Knob)
+CLK2 = 4
+DT2 = 5
+SW2 = 3
 
+# Create RotaryEncoder instances
+rotor1 = RotaryEncoder(CLK1, DT1)
+button1 = Button(SW1, pull_up=True)
 
-def rotary_encoder_thread():
+rotor2 = RotaryEncoder(CLK2, DT2)
+button2 = Button(SW2, pull_up=True)
+
+def rotary_encoder_thread(rotor, button, interface_name):
     global current_temperature
     last_value = 0
 
@@ -40,28 +47,27 @@ def rotary_encoder_thread():
             current_temperature = max(15, current_temperature - 1)
         
         if current_value != last_value:
-            print(f"Temperature changed to {current_temperature}")
+            print(f"Temperature changed to {current_temperature} by {interface_name}")
             socketio.emit('temperature_sync', {'temperature': current_temperature}, broadcast=True)
-            log_interaction(current_participant, 'Steering Wheel Knob', 'Change Temperature', current_temperature, start_time)
+            log_interaction(current_participant, interface_name, 'Change Temperature', current_temperature, start_time)
         
         last_value = current_value
 
     def button_pressed():
-        print("Button pressed")
-        socketio.emit('button_press', {'message': 'Encoder button pressed'})
-        log_interaction(current_participant, 'Steering Wheel Knob', 'Button Press', current_temperature, start_time)
+        print(f"Button pressed on {interface_name}")
+        socketio.emit('button_press', {'message': f'Encoder button pressed on {interface_name}'})
+        log_interaction(current_participant, interface_name, 'Button Press', current_temperature, start_time)
 
     rotor.when_rotated = rotated
     button.when_pressed = button_pressed
 
-    print("Rotary Encoder thread initialized. Press CTRL+C to exit.")
+    print(f"{interface_name} thread initialized. Press CTRL+C to exit.")
 
     try:
         while True:
             time.sleep(0.1)
     except KeyboardInterrupt:
-        print("\nExiting rotary encoder thread...")
-
+        print(f"\nExiting {interface_name} thread...")
 
 @app.route('/', methods=['GET', 'POST'])
 def start():
@@ -121,18 +127,26 @@ def participant():
 
 if __name__ == '__main__':
     try:
-        print("Starting Rotary Encoder thread")
-        encoder_thread = Thread(target=rotary_encoder_thread)
-        encoder_thread.daemon = True
-        encoder_thread.start()
+        print("Starting Rotary Encoder threads")
+        encoder_thread1 = Thread(target=rotary_encoder_thread, args=(rotor1, button1, 'Steering Wheel Knob'))
+        encoder_thread1.daemon = True
+        encoder_thread1.start()
+
+        encoder_thread2 = Thread(target=rotary_encoder_thread, args=(rotor2, button2, 'Infotainment Knob'))
+        encoder_thread2.daemon = True
+        encoder_thread2.start()
         
         print("Starting Flask application")
         socketio.run(app, host='0.0.0.0', port=5000, debug=False)
     except Exception as e:
         print(f"Error running application: {e}")
     finally:
-        if rotor:
-            rotor.close()
-        if button:
-            button.close()
+        if rotor1:
+            rotor1.close()
+        if button1:
+            button1.close()
+        if rotor2:
+            rotor2.close()
+        if button2:
+            button2.close()
         print("GPIO cleaned up")
