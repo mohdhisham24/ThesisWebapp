@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raspberry Pi Touch Screen</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .temperature { 
+            font-size: 48px; 
+            margin: 20px 0;
+        }
+        .button-container { 
+            display: flex;
+            justify-content: space-between;
+            width: 300px;
+        }
+        .temp-button { 
+            font-size: 36px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Temperature Control</h1>
+        <div class="temperature" id="temperature">20°C</div>
+        <div class="button-container">
+            <button class="temp-button" onclick="updateTemperature(-1)">-</button>
+            <button class="temp-button" onclick="updateTemperature(1)">+</button>
+        </div>
+    </div>
+
+    <script>
+        var socket = io();
+        var currentTemperature = 20;
+
+        function updateTemperature(value) {
+            socket.emit('temperature_update', { 
+                value: value,
+                interface: 'Raspberry Pi Touch'
+            });
+        }
+
+        socket.on('temperature_sync', function(data) {
+            currentTemperature = data.temperature;
+            document.getElementById('temperature').textContent = currentTemperature + '°C';
+        });
+
+        socket.on('experiment_started', function(data) {
+            alert('Experiment started for participant: ' + data.participant);
+        });
+
+        socket.on('experiment_ended', function(data) {
+            alert('Experiment ended for participant: ' + data.participant);
+        });
+    </script>
+</body>
+</html>

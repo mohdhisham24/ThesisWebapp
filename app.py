@@ -15,20 +15,13 @@ current_participant = None
 start_time = None
 current_temperature = 20
 
-# Define pin numbers for the first rotary encoder (Steering Wheel Knob)
-CLK1 = 13
-DT1 = 18
-SW1 = 12
-
-# Define pin numbers for the second rotary encoder (Infotainment Knob)
-CLK2 = 4
-DT2 = 5
-SW2 = 3
+# Define pin numbers for the rotary encoders
+CLK1, DT1, SW1 = 13, 18, 12  # Steering Wheel Knob
+CLK2, DT2, SW2 = 4, 5, 3     # Infotainment Knob
 
 # Create RotaryEncoder instances
 rotor1 = RotaryEncoder(CLK1, DT1)
 button1 = Button(SW1, pull_up=True)
-
 rotor2 = RotaryEncoder(CLK2, DT2)
 button2 = Button(SW2, pull_up=True)
 
@@ -98,7 +91,6 @@ def handle_temperature_update(data):
     if 'temperature' in data:
         current_temperature = int(data['temperature'])
     elif 'value' in data:
-        # For steering wheel touch buttons
         current_temperature += int(data['value'])
         current_temperature = max(15, min(30, current_temperature))
     
@@ -121,9 +113,13 @@ def log_interaction(participant_name, interface, action, temp, start_time):
         timestamp = datetime.now().isoformat()
         csv_writer.writerow([timestamp, interface, action, temp, elapsed_time])
 
-@app.route('/participant.html')
-def participant():
-    return render_template('participant.html')
+@app.route('/raspberry_touch')
+def raspberry_touch():
+    return render_template('raspberry_touch.html')
+
+@app.route('/infotainment_touch')
+def infotainment_touch():
+    return render_template('infotainment_touch.html')
 
 if __name__ == '__main__':
     try:
