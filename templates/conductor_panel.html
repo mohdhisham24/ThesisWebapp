@@ -26,10 +26,15 @@
         </div>
     </div>
 
+    <audio id="audioPlayer" style="display:none;"></audio>
+
     <script>
         var socket = io();
+        var audioPlayer = document.getElementById('audioPlayer');
 
         function playAudio(audioFile) {
+            audioPlayer.src = '/static/audio/' + audioFile;
+            audioPlayer.play();
             socket.emit('play_audio', { audio_file: audioFile });
         }
 
@@ -45,7 +50,6 @@
             alert('Experiment ended for participant: ' + data.participant);
         });
 
-        // Add this new event listener
         socket.on('redirect', function(data) {
             window.location.href = data.url;
         });
