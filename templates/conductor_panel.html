@@ -8,7 +8,7 @@
         body { font-family: Arial, sans-serif; text-align: center; }
         .interface { margin: 20px; padding: 20px; border: 1px solid #ddd; }
         .button-container { margin-top: 10px; }
-        .audio-button { margin: 0 5px; }
+        .audio-button, .end-button { margin: 0 5px; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
@@ -17,10 +17,12 @@
     <div class="interface">
         <h2>Audio Controls</h2>
         <div class="button-container">
-            <!-- Audio file paths are specified here -->
-            <button class="audio-button" onclick="playAudio('17wSTKnob.mp3')">Play Audio 1</button>
-            <button class="audio-button" onclick="playAudio('23wIFTouch.mp3')">Play Audio 2</button>
-            <button class="audio-button" onclick="playAudio('29wSTTouch.mp3')">Play Audio 3</button>
+            <button class="audio-button" onclick="playAudio('audio1.mp3')">Play Audio 1</button>
+            <button class="audio-button" onclick="playAudio('audio2.mp3')">Play Audio 2</button>
+            <button class="audio-button" onclick="playAudio('audio3.mp3')">Play Audio 3</button>
+        </div>
+        <div class="button-container">
+            <button class="end-button" onclick="endExperiment()">End Experiment</button>
         </div>
     </div>
 
@@ -29,6 +31,10 @@
 
         function playAudio(audioFile) {
             socket.emit('play_audio', { audio_file: audioFile });
+        }
+
+        function endExperiment() {
+            socket.emit('end_experiment');
         }
 
         socket.on('experiment_started', function(data) {
