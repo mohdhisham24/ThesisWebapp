@@ -17,9 +17,9 @@
     <div class="interface">
         <h2>Audio Controls</h2>
         <div class="button-container">
-            <button class="audio-button" onclick="playAudio('audio1.mp3')">Play Audio 1</button>
-            <button class="audio-button" onclick="playAudio('audio2.mp3')">Play Audio 2</button>
-            <button class="audio-button" onclick="playAudio('audio3.mp3')">Play Audio 3</button>
+            <button class="audio-button" onclick="playAudio('17wSTKnob.mp3')">change to 17 using Steering wheel knob</button>
+            <button class="audio-button" onclick="playAudio('23wIFTouch.mp3')">change to 23 using Infotaiment Touch screen</button>
+            <button class="audio-button" onclick="playAudio('29wSTTouch.mp3')">change to 29 using Steering Touch Screen</button>
         </div>
         <div class="button-container">
             <button class="end-button" onclick="endExperiment()">End Experiment</button>
@@ -43,6 +43,11 @@
 
         socket.on('experiment_ended', function(data) {
             alert('Experiment ended for participant: ' + data.participant);
+        });
+
+        // Add this new event listener
+        socket.on('redirect', function(data) {
+            window.location.href = data.url;
         });
     </script>
 </body>

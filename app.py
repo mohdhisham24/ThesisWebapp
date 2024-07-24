@@ -106,10 +106,13 @@ def handle_play_audio(data):
 
 @socketio.on('end_experiment')
 def handle_end_experiment():
-    global current_participant
+    global current_participant, start_time
     if current_participant:
         socketio.emit('experiment_ended', {'participant': current_participant})
         current_participant = None
+        start_time = None
+        # Emit an event to trigger redirection
+        emit('redirect', {'url': url_for('start')})
 
 def log_interaction(participant_name, interface, action, temp, start_time):
     if not participant_name:
