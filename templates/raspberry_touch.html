@@ -52,9 +52,12 @@
         </div>
     </div>
 
+    <audio id="audioPlayer" style="display:none;"></audio>
+
     <script>
         var socket = io();
         var currentTemperature = 20;
+        var audioPlayer = document.getElementById('audioPlayer');
 
         function updateTemperature(value) {
             socket.emit('temperature_update', { 
@@ -74,6 +77,12 @@
 
         socket.on('experiment_ended', function(data) {
             alert('Experiment ended for participant: ' + data.participant);
+        });
+
+        socket.on('play_audio', function(data) {
+            var audioFile = data.audio_file;
+            audioPlayer.src = '/static/audio/' + audioFile;
+            audioPlayer.play();
         });
     </script>
 </body>

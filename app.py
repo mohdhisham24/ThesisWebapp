@@ -98,6 +98,12 @@ def handle_temperature_update(data):
     log_interaction(current_participant, interface, 'Change Temperature', current_temperature, start_time)
     emit('temperature_sync', {'temperature': current_temperature}, broadcast=True)
 
+@socketio.on('play_audio')
+def handle_play_audio(data):
+    audio_file = data['audio_file']
+    log_interaction(current_participant, 'Audio', f'Play {audio_file}', current_temperature, start_time)
+    emit('play_audio', {'audio_file': audio_file}, broadcast=True)
+
 def log_interaction(participant_name, interface, action, temp, start_time):
     if not participant_name:
         return

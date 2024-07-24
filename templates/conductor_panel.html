@@ -1,22 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Experiment Control Panel</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conductor Panel</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding-top: 50px; }
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .interface { margin: 20px; padding: 20px; border: 1px solid #ddd; }
+        .button-container { margin-top: 10px; }
+        .audio-button { margin: 0 5px; }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
 <body>
-    <h1>Experiment Control Panel</h1>
-    <h2>Current Participant: <span id="participantName">{{ participant_name }}</span></h2>
-    <h3>Current Temperature: <span id="currentTemp">20°C</span></h3>
-    <button onclick="location.href='/end'">End Experiment</button>
+    <h1>Conductor Panel</h1>
+    <div class="interface">
+        <h2>Audio Controls</h2>
+        <div class="button-container">
+            <button class="audio-button" onclick="playAudio('audio1.mp3')">Play Audio 1</button>
+            <button class="audio-button" onclick="playAudio('audio2.mp3')">Play Audio 2</button>
+            <button class="audio-button" onclick="playAudio('audio3.mp3')">Play Audio 3</button>
+        </div>
+    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
         var socket = io();
-        socket.on('temperature_sync', function(data) {
-            document.getElementById('currentTemp').textContent = data.temperature + '°C';
+
+        function playAudio(audioFile) {
+            socket.emit('play_audio', { audio_file: audioFile });
+        }
+
+        socket.on('experiment_started', function(data) {
+            alert('Experiment started for participant: ' + data.participant);
+        });
+
+        socket.on('experiment_ended', function(data) {
+            alert('Experiment ended for participant: ' + data.participant);
         });
     </script>
 </body>
