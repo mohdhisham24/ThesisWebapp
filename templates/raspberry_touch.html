@@ -81,6 +81,7 @@
 
         socket.on('play_audio', function(data) {
             var audioFile = data.audio_file;
+            // The audio file path is specified here
             audioPlayer.src = '/static/audio/' + audioFile;
             audioPlayer.play();
         });
