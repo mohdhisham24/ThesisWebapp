@@ -2,22 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Steering Wheel Touch Screen</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
+        html, body { 
             margin: 0;
             padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        body { 
+            font-family: Arial, sans-serif; 
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
             background-color: #f0f0f0;
         }
         .container {
-            width: 144mm;
-            height: 69.4mm;
+            width: 100%;
+            height: 100%;
             display: flex;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -27,24 +31,31 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 36px;
+            font-size: 10vw;
         }
         .button-container {
-            width: 50mm;
+            width: 30%;
             display: flex;
             flex-direction: column;
             justify-content: space-around;
             align-items: center;
-            padding: 10px;
+            padding: 5%;
         }
         .temp-button {
-            width: 25mm;
-            height: 25mm;
-            font-size: 24px;
+            width: 100%;
+            height: 0;
+            padding-bottom: 100%; /* Makes the button square */
+            font-size: 8vw;
             border: none;
             background-color: #4CAF50;
             color: white;
             cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .temp-button span {
+            position: absolute;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
@@ -53,8 +64,8 @@
     <div class="container">
         <div class="temperature-display" id="temperature">20°C</div>
         <div class="button-container">
-            <button class="temp-button" onclick="updateTemperature(1)">+</button>
-            <button class="temp-button" onclick="updateTemperature(-1)">-</button>
+            <button class="temp-button" onclick="updateTemperature(1)"><span>+</span></button>
+            <button class="temp-button" onclick="updateTemperature(-1)"><span>-</span></button>
         </div>
     </div>
 
