@@ -3,37 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raspberry Pi Touch Screen</title>
+    <title>Steering Wheel Touch Screen</title>
     <style>
         body { 
             font-family: Arial, sans-serif; 
-            text-align: center; 
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+            background-color: #f0f0f0;
         }
         .container {
+            width: 144mm;
+            height: 69.4mm;
+            display: flex;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .temperature-display {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+        }
+        .button-container {
+            width: 50mm;
             display: flex;
             flex-direction: column;
+            justify-content: space-around;
             align-items: center;
+            padding: 10px;
         }
-        .temperature { 
-            font-size: 48px; 
-            margin: 20px 0;
-            transform: rotate(90deg);
-        }
-        .button-container { 
-            display: flex;
-            justify-content: space-between;
-            width: 300px;
-        }
-        .temp-button { 
-            font-size: 36px;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
+        .temp-button {
+            width: 25mm;
+            height: 25mm;
+            font-size: 24px;
             border: none;
             background-color: #4CAF50;
             color: white;
@@ -44,11 +51,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>Temperature Control</h1>
-        <div class="temperature" id="temperature">20°C</div>
+        <div class="temperature-display" id="temperature">20°C</div>
         <div class="button-container">
-            <button class="temp-button" onclick="updateTemperature(-1)">-</button>
             <button class="temp-button" onclick="updateTemperature(1)">+</button>
+            <button class="temp-button" onclick="updateTemperature(-1)">-</button>
         </div>
     </div>
 
@@ -60,9 +66,11 @@
         var audioPlayer = document.getElementById('audioPlayer');
 
         function updateTemperature(value) {
+            currentTemperature += value;
+            document.getElementById('temperature').textContent = currentTemperature + '°C';
             socket.emit('temperature_update', { 
-                value: value,
-                interface: 'Raspberry Pi Touch'
+                temperature: currentTemperature,
+                interface: 'Steering Wheel Touch'
             });
         }
 
@@ -81,7 +89,6 @@
 
         socket.on('play_audio', function(data) {
             var audioFile = data.audio_file;
-            // The audio file path is specified here
             audioPlayer.src = '/static/audio/' + audioFile;
             audioPlayer.play();
         });

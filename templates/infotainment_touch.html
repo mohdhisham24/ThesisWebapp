@@ -13,18 +13,34 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            background-color: #f0f0f0;
         }
         .container {
             width: 80%;
             max-width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .temperature { 
             font-size: 36px; 
             margin: 20px 0;
         }
-        .slider {
-            width: 100%;
-            height: 50px;
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .temp-button {
+            width: 25mm;
+            height: 25mm;
+            font-size: 24px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
@@ -33,7 +49,10 @@
     <div class="container">
         <h1>Temperature Control</h1>
         <div class="temperature" id="temperature">20°C</div>
-        <input type="range" id="temperatureSlider" class="slider" min="15" max="30" value="20">
+        <div class="button-container">
+            <button class="temp-button" onclick="updateTemperature(-1)">-</button>
+            <button class="temp-button" onclick="updateTemperature(1)">+</button>
+        </div>
     </div>
 
     <audio id="audioPlayer" style="display:none;"></audio>
@@ -43,9 +62,11 @@
         var currentTemperature = 20;
         var audioPlayer = document.getElementById('audioPlayer');
 
-        document.getElementById('temperatureSlider').oninput = function() {
+        function updateTemperature(value) {
+            currentTemperature += value;
+            document.getElementById('temperature').textContent = currentTemperature + '°C';
             socket.emit('temperature_update', { 
-                temperature: this.value,
+                temperature: currentTemperature,
                 interface: 'Infotainment Touch'
             });
         }
@@ -53,7 +74,6 @@
         socket.on('temperature_sync', function(data) {
             currentTemperature = data.temperature;
             document.getElementById('temperature').textContent = currentTemperature + '°C';
-            document.getElementById('temperatureSlider').value = currentTemperature;
         });
 
         socket.on('experiment_started', function(data) {
@@ -66,7 +86,6 @@
 
         socket.on('play_audio', function(data) {
             var audioFile = data.audio_file;
-            // The audio file path is specified here
             audioPlayer.src = '/static/audio/' + audioFile;
             audioPlayer.play();
         });
