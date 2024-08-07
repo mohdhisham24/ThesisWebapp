@@ -20,8 +20,8 @@
             background-color: #f0f0f0;
         }
         .container {
-            width: 69.4mm; /* Width of Google Pixel 4a in portrait */
-            height: 144mm; /* Height of Google Pixel 4a in portrait */
+            width: 62mm; /* Adjusted width to fit 6.2 cm */
+            height: 114mm; /* Adjusted height to fit 11.4 cm */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -31,25 +31,31 @@
             box-sizing: border-box;
         }
         .temperature-display {
-            font-size: 12vw;
+            font-size: 10vw; /* Responsive font size */
             text-align: center;
             padding: 20px 0;
+            transform: rotate(-90deg); /* Rotate display 90 degrees */
+            writing-mode: vertical-rl; /* Change writing mode for better vertical alignment */
+            text-orientation: mixed;  
         }
         .button-container {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
         }
         .temp-button {
-            width: 25mm;
-            height: 25mm;
-            font-size: 8vw;
+            width: 25mm; /* Fixed width */
+            height: 25mm; /* Fixed height */
+            font-size: 6vw; /* Responsive font size */
             border: none;
             background-color: #4CAF50;
             color: white;
             cursor: pointer;
-            margin: 10px 0;
-            border-radius: 50%;
+            margin: 10px 0; /* Space between buttons */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
