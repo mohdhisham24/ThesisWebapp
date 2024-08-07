@@ -20,32 +20,29 @@
             background-color: #f0f0f0;
         }
         .container {
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
+            width: 69.4mm; /* Width of Google Pixel 4a in portrait */
+            height: 144mm; /* Height of Google Pixel 4a in portrait */
             display: flex;
+            flex-direction: column;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            flex-direction: row; /* Ensure horizontal layout */
         }
         .temperature-display {
-            flex: 1; /* Takes up available space */
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 5vw; /* Responsive font size */
+            font-size: 10vw;
         }
         .button-container {
-            width: 30%; /* Fixed width for button container */
             display: flex;
-            flex-direction: column;
-            justify-content: center; /* Center buttons vertically */
-            align-items: center;
-            padding: 10px; /* Padding for spacing */
+            justify-content: space-around;
+            padding: 20px;
         }
         .temp-button {
-            width: 25mm; /* Fixed width */
-            height: 25mm; /* Fixed height */
-            font-size: 2.5vw; /* Responsive font size */
+            width: 25mm;
+            height: 25mm;
+            font-size: 6vw;
             border: none;
             background-color: #4CAF50;
             color: white;
@@ -53,7 +50,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 10px; /* Space between buttons */
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
@@ -62,8 +58,8 @@
     <div class="container">
         <div class="temperature-display" id="temperature">20°C</div>
         <div class="button-container">
-            <button class="temp-button" onclick="updateTemperature(1)">+</button>
             <button class="temp-button" onclick="updateTemperature(-1)">-</button>
+            <button class="temp-button" onclick="updateTemperature(1)">+</button>
         </div>
     </div>
 
