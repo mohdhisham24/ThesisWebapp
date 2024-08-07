@@ -35,7 +35,12 @@
             justify-content: center;
             align-items: center;
             font-size: 12vw;
+
         }
+        .temperature-display span {
+        display: inline-block;
+        transform: rotate(-90deg);
+    }
         .button-container {
             display: flex;
             justify-content: space-around;
@@ -58,7 +63,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="temperature-display" id="temperature">20°C</div>
+        <div class="temperature-display"><span id="temperature">20°C</span></div>
         <div class="button-container">
             <button class="temp-button" onclick="updateTemperature(-1)">-</button>
             <button class="temp-button" onclick="updateTemperature(1)">+</button>
