@@ -24,35 +24,32 @@
             height: 144mm; /* Height of Google Pixel 4a in portrait */
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 10mm;
+            box-sizing: border-box;
         }
         .temperature-display {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 10vw;
-            transform: rotate(-90deg);  /* Rotate 90 degrees counterclockwise */
-            writing-mode: vertical-rl;  /* Change writing mode for better vertical alignment */
-            text-orientation: mixed;  
+            font-size: 12vw;
+            text-align: center;
+            padding: 20px 0;
         }
         .button-container {
             display: flex;
-            justify-content: space-around;
-            padding: 20px;
+            flex-direction: column;
+            align-items: center;
         }
         .temp-button {
             width: 25mm;
             height: 25mm;
-            font-size: 6vw;
+            font-size: 8vw;
             border: none;
             background-color: #4CAF50;
             color: white;
             cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin: 10px 0;
+            border-radius: 50%;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
@@ -61,8 +58,8 @@
     <div class="container">
         <div class="temperature-display" id="temperature">20°C</div>
         <div class="button-container">
-            <button class="temp-button" onclick="updateTemperature(-1)">-</button>
             <button class="temp-button" onclick="updateTemperature(1)">+</button>
+            <button class="temp-button" onclick="updateTemperature(-1)">-</button>
         </div>
     </div>
 
