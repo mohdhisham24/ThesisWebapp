@@ -20,39 +20,35 @@
             background-color: #f0f0f0;
         }
         .container {
-            width: 62mm; /* Adjusted width to fit 6.2 cm */
-            height: 114mm; /* Adjusted height to fit 11.4 cm */
+            width: 62mm; /* 6.2cm width */
+            height: 114mm; /* 11.4cm height */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            padding: 10mm;
             box-sizing: border-box;
         }
         .temperature-display {
-            font-size: 10vw; /* Responsive font size */
-            text-align: center;
-            padding: 20px 0;
-            transform: rotate(-90deg); /* Rotate display 90 degrees */
-            writing-mode: vertical-rl; /* Change writing mode for better vertical alignment */
-            text-orientation: mixed;  
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12vw;
         }
         .button-container {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            justify-content: space-around;
+            padding: 10px;
         }
         .temp-button {
-            width: 25mm; /* Fixed width */
-            height: 25mm; /* Fixed height */
-            font-size: 6vw; /* Responsive font size */
+            width: 25mm;
+            height: 25mm;
+            font-size: 6vw;
             border: none;
             background-color: #4CAF50;
             color: white;
             cursor: pointer;
-            margin: 10px 0; /* Space between buttons */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -64,8 +60,8 @@
     <div class="container">
         <div class="temperature-display" id="temperature">20°C</div>
         <div class="button-container">
-            <button class="temp-button" onclick="updateTemperature(1)">+</button>
             <button class="temp-button" onclick="updateTemperature(-1)">-</button>
+            <button class="temp-button" onclick="updateTemperature(1)">+</button>
         </div>
     </div>
 
