@@ -1,0 +1,19 @@
+Timestamp,Interface,Action,Temperature,Elapsed Time
+2024-07-25T10:49:02.880754,Audio,Play 17wSTKnob.mp3,20,8.496619701385498
+2024-07-25T10:49:12.406043,Audio,Play 23wIFTouch.mp3,20,18.021909713745117
+2024-07-25T10:49:33.881758,Steering Wheel Knob,Change Temperature,21,39.497623443603516
+2024-07-25T10:49:34.147659,Steering Wheel Knob,Change Temperature,22,39.76352548599243
+2024-07-25T10:49:34.633987,Steering Wheel Knob,Change Temperature,23,40.24985361099243
+2024-07-25T10:49:35.083028,Steering Wheel Knob,Change Temperature,24,40.698894739151
+2024-07-25T10:49:35.372360,Steering Wheel Knob,Change Temperature,25,40.988226890563965
+2024-07-25T10:49:35.402151,Steering Wheel Knob,Change Temperature,26,41.01801776885986
+2024-07-25T10:49:35.761127,Steering Wheel Knob,Change Temperature,27,41.376994371414185
+2024-07-25T10:49:35.821418,Steering Wheel Knob,Change Temperature,28,41.43728494644165
+2024-07-25T10:49:40.368642,Infotainment Knob,Change Temperature,29,45.984509229660034
+2024-07-25T10:49:40.426517,Infotainment Knob,Change Temperature,30,46.042383909225464
+2024-07-25T10:49:40.613017,Infotainment Knob,Change Temperature,30,46.22888445854187
+2024-07-25T10:49:40.807318,Infotainment Knob,Change Temperature,30,46.423184394836426
+2024-07-25T10:49:40.859531,Infotainment Knob,Change Temperature,30,46.475398778915405
+2024-07-25T10:49:42.573884,Infotainment Knob,Change Temperature,29,48.18975067138672
+2024-07-25T10:49:42.617461,Infotainment Knob,Change Temperature,28,48.233328342437744
+2024-07-25T10:49:42.664424,Infotainment Knob,Change Temperature,27,48.280290842056274

@@ -1,0 +1,11 @@
+Timestamp,Interface,Action,Temperature,Elapsed Time
+2024-08-08T19:29:47.698588,Audio,Play t17.mp3,25,18.74628233909607
+2024-08-08T19:29:58.970805,Audio,Play t17.mp3,25,30.018500089645386
+2024-08-08T19:30:01.747254,Steering Wheel Knob,Change Temperature,24,32.794950008392334
+2024-08-08T19:30:01.810530,Steering Wheel Knob,Change Temperature,23,32.85822582244873
+2024-08-08T19:30:02.649542,Steering Wheel Knob,Change Temperature,22,33.69723868370056
+2024-08-08T19:30:02.855246,Steering Wheel Knob,Change Temperature,21,33.90294313430786
+2024-08-08T19:30:08.595717,Steering Wheel Knob,Change Temperature,20,39.64341330528259
+2024-08-08T19:30:09.189075,Steering Wheel Knob,Change Temperature,19,40.23677134513855
+2024-08-08T19:30:10.190630,Steering Wheel Knob,Change Temperature,18,41.23832702636719
+2024-08-08T19:30:11.759241,Steering Wheel Knob,Change Temperature,17,42.80693745613098

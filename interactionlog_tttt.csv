@@ -1,0 +1,9 @@
+Timestamp,Interface,Action,Temperature,Elapsed Time
+2024-07-25T11:44:08.547787,Audio,Play 17wSTKnob.mp3,26,14.125678539276123
+2024-07-25T11:44:18.359468,Steering Wheel Knob,Change Temperature,25,23.93736219406128
+2024-07-25T11:44:18.388060,Steering Wheel Knob,Change Temperature,24,23.965954303741455
+2024-07-25T11:44:18.500120,Steering Wheel Knob,Change Temperature,23,24.07801389694214
+2024-07-25T11:44:18.589626,Steering Wheel Knob,Change Temperature,22,24.167519569396973
+2024-07-25T11:44:18.761499,Steering Wheel Knob,Change Temperature,21,24.339393138885498
+2024-07-25T11:44:19.669204,Steering Wheel Knob,Change Temperature,20,25.24709916114807
+2024-07-25T11:49:04.706836,Steering Wheel Knob,Change Temperature,21,310.2847309112549

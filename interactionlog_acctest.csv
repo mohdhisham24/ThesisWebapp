@@ -1,0 +1,17 @@
+Timestamp,Interface,Action,Temperature,Elapsed Time
+2024-08-06T17:52:13.021939,Steering Wheel Knob,Change Temperature,21,346.9473385810852
+2024-08-06T17:52:13.201074,Raspberry Pi Touch,Change Temperature,22,347.12647438049316
+2024-08-06T17:52:22.290196,Steering Wheel Knob,Change Temperature,23,356.2155976295471
+2024-08-06T17:52:22.618170,Raspberry Pi Touch,Change Temperature,24,356.54356956481934
+2024-08-06T17:52:29.987212,Steering Wheel Knob,Change Temperature,25,363.91261315345764
+2024-08-06T17:52:30.048242,Steering Wheel Knob,Change Temperature,26,363.97364354133606
+2024-08-06T17:52:30.070005,Raspberry Pi Touch,Change Temperature,27,363.99540543556213
+2024-08-06T17:52:38.615437,Steering Wheel Knob,Change Temperature,28,372.54083704948425
+2024-08-06T17:52:38.796191,Raspberry Pi Touch,Change Temperature,29,372.72159242630005
+2024-08-06T17:52:50.232319,Steering Wheel Knob,Change Temperature,30,384.1577203273773
+2024-08-06T17:52:50.253172,Steering Wheel Knob,Change Temperature,30,384.17857360839844
+2024-08-06T17:52:50.345411,Raspberry Pi Touch,Change Temperature,30,384.2708113193512
+2024-08-06T17:53:01.119993,Steering Wheel Knob,Change Temperature,29,395.0453939437866
+2024-08-06T17:53:01.402246,Raspberry Pi Touch,Change Temperature,28,395.3276467323303
+2024-08-06T17:53:03.976980,Steering Wheel Knob,Change Temperature,27,397.90238070487976
+2024-08-06T17:53:04.171645,Raspberry Pi Touch,Change Temperature,26,398.0970027446747
