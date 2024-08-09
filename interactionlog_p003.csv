@@ -1,0 +1,8 @@
+Timestamp,Interface,Action,Temperature,Elapsed Time
+2024-08-09T15:50:01.817786,Audio,Play t15.mp3,20,7.467480421066284
+2024-08-09T15:54:45.536729,Audio,Play t15.mp3,20,291.18642497062683
+2024-08-09T15:54:49.237580,Steering Wheel Touch,Change Temperature,19,294.88727712631226
+2024-08-09T15:54:49.559178,Steering Wheel Touch,Change Temperature,18,295.20887541770935
+2024-08-09T15:54:50.564255,Steering Wheel Touch,Change Temperature,17,296.21395111083984
+2024-08-09T15:54:50.963029,Steering Wheel Touch,Change Temperature,16,296.61272501945496
+2024-08-09T15:54:52.206710,Steering Wheel Touch,Change Temperature,15,297.8564074039459
