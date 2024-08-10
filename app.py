@@ -69,6 +69,7 @@ def start():
         current_participant = request.form['participant_name']
         start_time = time.time()
         socketio.emit('experiment_started', {'participant': current_participant})
+        socketio.emit('start_recording')  # Emit signal to start recording
         return redirect(url_for('conductor_panel'))
     return render_template('start.html')
 
@@ -81,6 +82,7 @@ def end():
     global current_participant, start_time
     if current_participant:
         socketio.emit('experiment_ended', {'participant': current_participant})
+        socketio.emit('stop_recording')  # Emit signal to stop recording
         current_participant = None
         start_time = None
     return redirect(url_for('start'))
@@ -111,7 +113,6 @@ def handle_end_experiment():
         socketio.emit('experiment_ended', {'participant': current_participant})
         current_participant = None
         start_time = None
-        # Emit an event to trigger redirection
         emit('redirect', {'url': url_for('start')})
 
 def log_interaction(participant_name, interface, action, temp, start_time):

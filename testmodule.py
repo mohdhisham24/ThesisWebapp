@@ -34,3 +34,8 @@ except KeyboardInterrupt:
 finally:
     # gpiozero automatically cleans up GPIO resources
     print("GPIO cleaned up")
+
+
+
+
+
