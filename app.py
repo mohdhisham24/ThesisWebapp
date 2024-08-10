@@ -110,4 +110,5 @@ def handle_play_audio(data):
 def handle_end_experiment():
     global current_participant, start_time
     if current_participant:
-        socketio.emit('experiment
+        socketio.emit('experiment_ended', {'participant': current_participant})
+
