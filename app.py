@@ -6,6 +6,8 @@ from datetime import datetime
 import os
 from gpiozero import RotaryEncoder, Button
 from threading import Thread
+import signal
+import sys
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -111,4 +113,64 @@ def handle_end_experiment():
     global current_participant, start_time
     if current_participant:
         socketio.emit('experiment_ended', {'participant': current_participant})
+        current_participant = None
+        start_time = None
+        emit('redirect', {'url': url_for('start')})
 
+def log_interaction(participant_name, interface, action, temp, start_time):
+    if not participant_name:
+        return
+    filename = f"interactionlog_{participant_name}.csv"
+    file_exists = os.path.isfile(filename)
+    
+    with open(filename, 'a', newline='') as log_file:
+        csv_writer = csv.writer(log_file)
+        if not file_exists:
+            csv_writer.writerow(['Timestamp', 'Interface', 'Action', 'Temperature', 'Elapsed Time'])
+        
+        elapsed_time = time.time() - start_time
+        timestamp = datetime.now().isoformat()
+        csv_writer.writerow([timestamp, interface, action, temp, elapsed_time])
+
+@app.route('/raspberry_touch')
+@app.route('/raspberry_touch.html')
+def raspberry_touch():
+    return render_template('raspberry_touch.html')
+
+@app.route('/infotainment_touch')
+@app.route('/infotainment_touch.html')
+def infotainment_touch():
+    return render_template('infotainment_touch.html')
+
+def cleanup(signal, frame):
+    print("Cleaning up GPIO...")
+    if rotor1:
+        rotor1.close()
+    if button1:
+        button1.close()
+    if rotor2:
+        rotor2.close()
+    if button2:
+        button2.close()
+    print("GPIO cleaned up")
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, cleanup)
+
+if __name__ == '__main__':
+    try:
+        print("Starting Rotary Encoder threads")
+        encoder_thread1 = Thread(target=rotary_encoder_thread, args=(rotor1, button1, 'Steering Wheel Knob'))
+        encoder_thread1.daemon = True
+        encoder_thread1.start()
+
+        encoder_thread2 = Thread(target=rotary_encoder_thread, args=(rotor2, button2, 'Infotainment Knob'))
+        encoder_thread2.daemon = True
+        encoder_thread2.start()
+        
+        print("Starting Flask application")
+        socketio.run(app, host='0.0.0.0', port=5000, debug=True)  # Enable debug mode
+    except Exception as e:
+        print(f"Error running application: {e}")
+    finally:
+        cleanup(None, None)
