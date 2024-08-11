@@ -1,17 +1,25 @@
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Start Experiment</title>
-        <style>
-            body { font-family: Arial, sans-serif; text-align: center; padding-top: 50px; }
-            form { display: inline-block; }
-        </style>
-    </head>
-    <body>
-        <h1>Start Experiment</h1>
-        <form method="POST">
-            <input type="text" name="participant_name" placeholder="Enter participant name" required>
-            <input type="submit" value="Start">
-        </form>
-    </body>
-    </html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Start Experiment</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding-top: 50px; }
+        form { display: inline-block; }
+    </style>
+</head>
+<body>
+    <h1>Start Experiment</h1>
+    <form method="POST">
+        <input type="text" name="participant_name" placeholder="Enter participant name" required>
+        <input type="submit" value="Start" onclick="startExperiment()">
+    </form>
+
+    <script>
+        function startExperiment() {
+            // Call the start_camera function directly
+            start_camera(participant_name);
+            socket.emit('experiment_started', { participant: participant_name });
+        }
+    </script>
+</body>
+</html>
