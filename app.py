@@ -6,6 +6,7 @@ from datetime import datetime
 import os
 from gpiozero import RotaryEncoder, Button
 from threading import Thread
+import requests  # Import requests library
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -79,6 +80,10 @@ def start():
 @app.route('/conductor_panel')
 def conductor_panel():
     return render_template('conductor_panel.html', participant_name=current_participant)
+
+@app.route('/temperature')
+def temperature():
+    return render_template('temperature.html')
 
 @app.route('/end')
 def end():

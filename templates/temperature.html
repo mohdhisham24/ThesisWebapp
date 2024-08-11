@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Temperature</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding-top: 50px; }
+        .temperature { font-size: 2em; margin: 20px; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <h1>Current Temperature</h1>
+    <div class="temperature" id="temperatureDisplay">Temperature: 20°C</div>
+
+    <script>
+        var socket = io();
+
+        socket.on('temperature_sync', function(data) {
+            document.getElementById('temperatureDisplay').innerText = 'Temperature: ' + data.temperature + '°C';
+        });
+    </script>
+</body>
+</html>
