@@ -76,6 +76,18 @@ def start_camera(participant_name):
     except Exception as e:
         print("Error starting camera:", e)
 
+# NEW: Function to stop the camera
+def stop_camera():
+    camera_server_url = "http://192.168.0.24:5001/stop"  # Replace with actual camera server IP
+    try:
+        response = requests.post(camera_server_url)
+        if response.status_code == 200:
+            print("Camera stopped successfully.")
+        else:
+            print("Failed to stop camera:", response.text)
+    except Exception as e:
+        print("Error stopping camera:", e)
+
 @app.route('/', methods=['GET', 'POST'])
 def start():
     global current_participant, start_time
@@ -98,6 +110,9 @@ def conductor_panel():
 def end():
     global current_participant, start_time
     if current_participant:
+        # NEW: Call the function to stop the camera
+        stop_camera()
+        
         socketio.emit('experiment_ended', {'participant': current_participant})
         current_participant = None
         start_time = None
