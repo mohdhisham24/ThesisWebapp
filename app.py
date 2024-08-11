@@ -65,7 +65,7 @@ def rotary_encoder_thread(rotor, button, interface_name):
 
 # NEW: Function to start the camera
 def start_camera(participant_name):
-    camera_server_url = "http://<camera_ip>:5001/start"  # Replace with actual camera server IP
+    camera_server_url = "http://192.168.0.24:5001/start"  # Replace with actual camera server IP
     payload = {"participant_name": participant_name}
     try:
         response = requests.post(camera_server_url, json=payload)
