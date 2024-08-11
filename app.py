@@ -6,7 +6,7 @@ from datetime import datetime
 import os
 from gpiozero import RotaryEncoder, Button
 from threading import Thread
-import requests  # NEW: Import requests library
+import requests  # Import requests library
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -25,6 +25,9 @@ rotor1 = RotaryEncoder(CLK1, DT1)
 button1 = Button(SW1, pull_up=True)
 rotor2 = RotaryEncoder(CLK2, DT2)
 button2 = Button(SW2, pull_up=True)
+
+# NEW: Global variable to track if the camera is already running
+camera_running = False
 
 def rotary_encoder_thread(rotor, button, interface_name):
     global current_temperature
@@ -65,11 +68,17 @@ def rotary_encoder_thread(rotor, button, interface_name):
 
 # NEW: Function to start the camera
 def start_camera(participant_name):
+    global camera_running
+    if camera_running:
+        print("Camera is already running.")
+        return  # Avoid starting the camera if it's already running
+
     camera_server_url = "http://192.168.0.24:5001/start"  # Replace with actual camera server IP
     payload = {"participant_name": participant_name}
     try:
         response = requests.post(camera_server_url, json=payload)
         if response.status_code == 200:
+            camera_running = True  # Set to True when camera starts successfully
             print(f"Camera started for {participant_name}")
         else:
             print("Failed to start camera:", response.text)
@@ -78,10 +87,12 @@ def start_camera(participant_name):
 
 # NEW: Function to stop the camera
 def stop_camera():
+    global camera_running
     camera_server_url = "http://192.168.0.24:5001/stop"  # Replace with actual camera server IP
     try:
         response = requests.post(camera_server_url)
         if response.status_code == 200:
+            camera_running = False  # Set to False when camera stops successfully
             print("Camera stopped successfully.")
         else:
             print("Failed to stop camera:", response.text)
@@ -96,7 +107,7 @@ def start():
         start_time = time.time()
         socketio.emit('experiment_started', {'participant': current_participant})
         
-        # NEW: Call the function to start the camera
+        # Start the camera
         start_camera(current_participant)
         
         return redirect(url_for('conductor_panel'))
@@ -110,7 +121,7 @@ def conductor_panel():
 def end():
     global current_participant, start_time
     if current_participant:
-        # NEW: Call the function to stop the camera
+        # Stop the camera
         stop_camera()
         
         socketio.emit('experiment_ended', {'participant': current_participant})
