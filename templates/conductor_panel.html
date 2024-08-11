@@ -9,15 +9,19 @@
         .interface { margin: 20px; padding: 20px; border: 1px solid #ddd; }
         .button-container { margin-top: 10px; }
         .audio-button, .end-button { margin: 0 5px; }
+        .temperature { font-size: 1.5em; margin: 20px; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
 <body>
     <h1>Conductor Panel</h1>
     <div class="interface">
+        <h2>Current Temperature</h2>
+        <div class="temperature" id="temperatureDisplay">Temperature: 20°C</div>
+        
         <h2>Audio Controls</h2>
         <div class="button-container">
-            <button class="audio-button" onclick="playAudio('test.mp3')">test audio</button>
+            <button class="audio-button" onclick="playAudio('test.mp3')">Test Audio</button>
             <button class="audio-button" onclick="playAudio('t15.mp3')">Change Temperature to 15</button>
             <button class="audio-button" onclick="playAudio('t16.mp3')">Change Temperature to 16</button>
             <button class="audio-button" onclick="playAudio('t17.mp3')">Change Temperature to 17</button>
@@ -56,6 +60,11 @@
             // Emit an event to end the experiment
             socket.emit('end_experiment');
         }
+
+        // Listen for temperature updates
+        socket.on('temperature_sync', function(data) {
+            document.getElementById('temperatureDisplay').innerText = 'Temperature: ' + data.temperature + '°C';
+        });
 
         socket.on('experiment_ended', function(data) {
             alert('Experiment ended for participant: ' + data.participant);
