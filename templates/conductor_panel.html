@@ -35,6 +35,7 @@
             <button class="audio-button" onclick="playAudio('t30.mp3')">Change Temperrature to 30</button>
         </div>
         <div class="button-container">
+            <button class="start-button" onclick="startExperiment()">Start Experiment</button>
             <button class="end-button" onclick="endExperiment()">End Experiment</button>
         </div>
     </div>
@@ -51,13 +52,17 @@
             socket.emit('play_audio', { audio_file: audioFile });
         }
 
-        function endExperiment() {
-            socket.emit('end_experiment');
+        function startExperiment() {
+            // Call the start_camera function directly
+            start_camera(participant_name);
+            socket.emit('experiment_started', { participant: participant_name });
         }
 
-        socket.on('experiment_started', function(data) {
-            alert('Experiment started for participant: ' + data.participant);
-        });
+        function endExperiment() {
+            // Call the stop_camera function directly
+            stop_camera();
+            socket.emit('end_experiment');
+        }
 
         socket.on('experiment_ended', function(data) {
             alert('Experiment ended for participant: ' + data.participant);
