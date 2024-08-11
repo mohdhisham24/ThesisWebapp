@@ -6,6 +6,7 @@ from datetime import datetime
 import os
 from gpiozero import RotaryEncoder, Button
 from threading import Thread
+import requests  # NEW: Import requests library
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -62,6 +63,19 @@ def rotary_encoder_thread(rotor, button, interface_name):
     except KeyboardInterrupt:
         print(f"\nExiting {interface_name} thread...")
 
+# NEW: Function to start the camera
+def start_camera(participant_name):
+    camera_server_url = "http://<camera_ip>:5001/start"  # Replace with actual camera server IP
+    payload = {"participant_name": participant_name}
+    try:
+        response = requests.post(camera_server_url, json=payload)
+        if response.status_code == 200:
+            print(f"Camera started for {participant_name}")
+        else:
+            print("Failed to start camera:", response.text)
+    except Exception as e:
+        print("Error starting camera:", e)
+
 @app.route('/', methods=['GET', 'POST'])
 def start():
     global current_participant, start_time
@@ -69,6 +83,10 @@ def start():
         current_participant = request.form['participant_name']
         start_time = time.time()
         socketio.emit('experiment_started', {'participant': current_participant})
+        
+        # NEW: Call the function to start the camera
+        start_camera(current_participant)
+        
         return redirect(url_for('conductor_panel'))
     return render_template('start.html')
 
