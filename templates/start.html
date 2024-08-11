@@ -16,8 +16,7 @@
 
     <script>
         function startExperiment() {
-            // Call the start_camera function directly
-            start_camera(participant_name);
+            // Emit an event to start the experiment
             socket.emit('experiment_started', { participant: participant_name });
         }
     </script>

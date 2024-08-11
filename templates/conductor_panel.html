@@ -52,13 +52,9 @@
         }
 
         function endExperiment() {
-            // Emit an event to stop the camera and end the experiment
+            // Emit an event to end the experiment
             socket.emit('end_experiment');
         }
-
-        socket.on('camera_initialized', function() {
-            console.log('Camera initialized. You can start the experiment now.');
-        });
 
         socket.on('experiment_ended', function(data) {
             alert('Experiment ended for participant: ' + data.participant);
