@@ -176,4 +176,4 @@ if __name__ == '__main__':
         print("Starting Flask application")
         socketio.run(app, host='0.0.0.0', port=5000, debug=False)
     except Exception as e:
-        print(f"Error running
+        print(f"Error running")
