@@ -42,6 +42,9 @@ def rotary_encoder_thread(rotor, button, interface_name):
             if current_temperature > 15:  # Limit to min 15
                 current_temperature -= 1
         
+        # Ensure temperature does not go below 15
+        current_temperature = max(15, current_temperature)
+
         if current_value != last_value:
             print(f"Temperature changed to {current_temperature} by {interface_name}")
             socketio.emit('temperature_sync', {'temperature': current_temperature}, broadcast=True)
@@ -109,7 +112,7 @@ def handle_temperature_update(data):
         current_temperature += int(data['value'])
         # Restrict temperature to 15-30
         current_temperature = max(15, min(30, current_temperature))
-    
+
     interface = data['interface']
     log_interaction(current_participant, interface, 'Change Temperature', current_temperature, start_time)
     emit('temperature_sync', {'temperature': current_temperature}, broadcast=True)
@@ -173,14 +176,4 @@ if __name__ == '__main__':
         print("Starting Flask application")
         socketio.run(app, host='0.0.0.0', port=5000, debug=False)
     except Exception as e:
-        print(f"Error running application: {e}")
-    finally:
-        if rotor1:
-            rotor1.close()
-        if button1:
-            button1.close()
-        if rotor2:
-            rotor2.close()
-        if button2:
-            button2.close()
-        print("GPIO cleaned up")
+        print(f"Error running

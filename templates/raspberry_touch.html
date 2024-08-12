@@ -35,12 +35,11 @@
             justify-content: center;
             align-items: center;
             font-size: 12vw;
-
         }
         .temperature-display span {
-        display: inline-block;
-        transform: rotate(90deg);
-    }
+            display: inline-block;
+            transform: rotate(90deg);
+        }
         .button-container {
             display: flex;
             justify-content: space-around;
@@ -79,6 +78,14 @@
 
         function updateTemperature(value) {
             currentTemperature += value;
+
+            // Enforce the temperature limits
+            if (currentTemperature < 15) {
+                currentTemperature = 15;
+            } else if (currentTemperature > 30) {
+                currentTemperature = 30;
+            }
+
             document.getElementById('temperature').textContent = currentTemperature + '°C';
             socket.emit('temperature_update', { 
                 temperature: currentTemperature,
