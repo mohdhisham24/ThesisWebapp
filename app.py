@@ -77,7 +77,7 @@ def start():
         log_interaction(current_participant, 'Experiment', 'Start', current_temperature, start_time)
         
         return redirect(url_for('conductor_panel'))
-    return render_template('index.html')
+    return render_template('start.html')
 
 @app.route('/conductor_panel')
 def conductor_panel():
