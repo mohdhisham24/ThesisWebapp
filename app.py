@@ -6,7 +6,6 @@ from datetime import datetime
 import os
 from gpiozero import RotaryEncoder, Button
 from threading import Thread
-import requests  # Import requests library
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -35,10 +34,13 @@ def rotary_encoder_thread(rotor, button, interface_name):
         nonlocal last_value
         current_value = rotor.value
         
+        # Restrict temperature to 15-30
         if current_value > last_value:
-            current_temperature = min(30, current_temperature + 1)
+            if current_temperature < 30:  # Limit to max 30
+                current_temperature += 1
         elif current_value < last_value:
-            current_temperature = max(15, current_temperature - 1)
+            if current_temperature > 15:  # Limit to min 15
+                current_temperature -= 1
         
         if current_value != last_value:
             print(f"Temperature changed to {current_temperature} by {interface_name}")
@@ -75,7 +77,7 @@ def start():
         log_interaction(current_participant, 'Experiment', 'Start', current_temperature, start_time)
         
         return redirect(url_for('conductor_panel'))
-    return render_template('start.html')
+    return render_template('index.html')
 
 @app.route('/conductor_panel')
 def conductor_panel():
@@ -105,6 +107,7 @@ def handle_temperature_update(data):
         current_temperature = int(data['temperature'])
     elif 'value' in data:
         current_temperature += int(data['value'])
+        # Restrict temperature to 15-30
         current_temperature = max(15, min(30, current_temperature))
     
     interface = data['interface']

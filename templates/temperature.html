@@ -12,11 +12,19 @@
 <body>
     <div class="temperature" id="temperatureDisplay">Temperature: 20°C</div>
 
+    <audio id="audioPlayer" style="display:none;"></audio>
+
     <script>
         var socket = io();
 
         socket.on('temperature_sync', function(data) {
             document.getElementById('temperatureDisplay').innerText = 'Temperature: ' + data.temperature + '°C';
+        });
+
+        socket.on('play_audio', function(data) {
+            var audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.src = '/static/audio/' + data.audio_file;
+            audioPlayer.play();
         });
     </script>
 </body>
