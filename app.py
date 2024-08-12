@@ -176,4 +176,14 @@ if __name__ == '__main__':
         print("Starting Flask application")
         socketio.run(app, host='0.0.0.0', port=5000, debug=False)
     except Exception as e:
-        print(f"Error running")
+        print(f"Error running application: {e}")
+    finally:
+        if rotor1:
+            rotor1.close()
+        if button1:
+            button1.close()
+        if rotor2:
+            rotor2.close()
+        if button2:
+            button2.close()
+        print("GPIO cleaned up")
