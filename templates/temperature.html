@@ -6,19 +6,40 @@
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding-top: 50px; }
         .temperature { font-size: 2em; margin: 20px; }
+        .button-container { margin-top: 20px; }
+        .temp-button {
+            padding: 10px 20px;
+            font-size: 1.5em;
+            margin: 0 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .temp-button:hover {
+            background-color: #45a049;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
 <body>
-    <div class="temperature" id="temperatureDisplay">Temperature: 20°C</div>
+    <div class="temperature" id="temperatureDisplay">20°C</div>
+
+    <div class="button-container">
+        <button class="temp-button" onclick="updateTemperature(1)">+</button>
+        <button class="temp-button" onclick="updateTemperature(-1)">-</button>
+    </div>
 
     <audio id="audioPlayer" style="display:none;"></audio>
 
     <script>
         var socket = io();
+        var currentTemperature = 20; // Initialize the current temperature
 
         socket.on('temperature_sync', function(data) {
-            document.getElementById('temperatureDisplay').innerText = 'Temperature: ' + data.temperature + '°C';
+            currentTemperature = data.temperature;
+            document.getElementById('temperatureDisplay').innerText = 'Temperature: ' + currentTemperature + '°C';
         });
 
         socket.on('play_audio', function(data) {
@@ -26,6 +47,23 @@
             audioPlayer.src = '/static/audio/' + data.audio_file;
             audioPlayer.play();
         });
+
+        function updateTemperature(value) {
+            currentTemperature += value;
+
+            // Enforce the temperature limits
+            if (currentTemperature < 15) {
+                currentTemperature = 15;
+            } else if (currentTemperature > 30) {
+                currentTemperature = 30;
+            }
+
+            document.getElementById('temperatureDisplay').innerText = 'Temperature: ' + currentTemperature + '°C';
+            socket.emit('temperature_update', { 
+                temperature: currentTemperature,
+                interface: 'Temperature Page'
+            });
+        }
     </script>
 </body>
 </html>
